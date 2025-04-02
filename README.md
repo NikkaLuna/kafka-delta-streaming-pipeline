@@ -60,6 +60,7 @@ You can inspect this table using:
 
 ```sql
 SELECT * FROM monitor_logs ORDER BY run_time DESC
+```
 
 ![Monitor Logs Preview](docs/monitor_logs_preview.png)
 
