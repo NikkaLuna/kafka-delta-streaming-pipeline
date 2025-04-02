@@ -71,6 +71,9 @@ print(f"Deduplicated record count: {df_deduped.count()}")
 
 # Step 4: Write to Silver Delta table (partitioned by event_type)
 # Write cleaned, deduplicated records to Silver Delta table (partitioned by event_type)
+
+df_deduped = df_deduped.withWatermark("timestamp", "5 minutes")
+
 (
     df_deduped.writeStream
     .format("delta")
