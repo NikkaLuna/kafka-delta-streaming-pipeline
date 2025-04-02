@@ -65,7 +65,7 @@ SELECT * FROM monitor_logs ORDER BY run_time DESC
 ![Monitor Logs Preview](docs/monitor_logs_preview.png)
 
 
-<pre> ```
+<pre> 
 ## Project Structure
 
 kafka-delta-streaming-pipeline/
@@ -82,7 +82,7 @@ kafka-delta-streaming-pipeline/
 │   └── kafka_schema.py                 # Reusable schema and validation functions
 ├── .gitignore
 └── README.md
-``` </pre>
+ </pre>
 
 ## Sample Kafka Event
 
