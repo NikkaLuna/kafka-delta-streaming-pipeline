@@ -51,7 +51,7 @@ Visual DAG:
 
 ![DAG Screenshot](docs/full_pipeline_dag.png)
 
-
+<pre> ```bash
 ## Project Structure
 
 kafka-delta-streaming-pipeline/
@@ -68,6 +68,7 @@ kafka-delta-streaming-pipeline/
 │   └── kafka_schema.py                 # Reusable schema and validation functions
 ├── .gitignore
 └── README.md
+``` </pre>
 
 ## Sample Kafka Event
 
