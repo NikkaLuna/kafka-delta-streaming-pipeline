@@ -35,8 +35,17 @@ It includes the following chained tasks:
 You can view the exported JSON definition of the DAG [here](jobs/full_streaming_pipeline.json).
 
 File path:
+
 ```bash
 jobs/full_streaming_pipeline.json
+
+## Streaming Observability
+
+This pipeline logs late/stale event metrics to a Delta table called `monitor_logs`.
+
+```sql
+SELECT * FROM monitor_logs ORDER BY run_time DESC
+
 
 ## Project Structure
 
