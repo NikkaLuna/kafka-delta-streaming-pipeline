@@ -72,13 +72,17 @@ print(f"Deduplicated record count: {df_deduped.count()}")
 # Step 4: Write to Silver Delta table (partitioned by event_type)
 # Write cleaned, deduplicated records to Silver Delta table (partitioned by event_type)
 (
-    df_deduped.write
+    df_deduped.writeStream
     .format("delta")
-    .mode("overwrite")  # Overwrite for dev; use append for production
+    .outputMode("append")
     .partitionBy("event_type")
     .option("mergeSchema", "true")
-    .saveAsTable("silver_events")
+    .option("checkpointLocation", "/dbfs/checkpoints/bronze_to_silver")
+    .option("maxBytesPerTrigger", "5mb")
+    .trigger(processingTime="30 seconds")
+    .table("silver_events")
 )
+
 
 
 

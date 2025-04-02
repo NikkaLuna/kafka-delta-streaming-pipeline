@@ -18,7 +18,7 @@ Used in: Kafka → Delta Bronze → Silver → MLflow pipeline
 # Step 1: Kafka connection and stream options
 
 # In production, load secrets via Databricks Secrets or .env
-kafka_bootstrap = "pkc-zgp5j7.us-south1.gcp.confluent.cloud:9092"
+kafka_bootstrap = "pkc-921jm.us-east-2.aws.confluent.cloud:9092"
 kafka_topic = "stream-input"
 kafka_api_key = "YOUR_KAFKA_API_KEY"
 kafka_api_secret = "YOUR_KAFKA_API_SECRET"
@@ -73,9 +73,12 @@ df_parsed.printSchema()
     df_parsed.writeStream
     .format("delta")
     .outputMode("append")
-    .option("checkpointLocation", "/tmp/kafka_checkpoint_bronze")  # In prod use DBFS location
+    .option("checkpointLocation", "/dbfs/checkpoints/kafka_to_bronze")  # Moved from /tmp for stability
+    .option("maxBytesPerTrigger", "5mb")  # Controls per-microbatch load size
+    .trigger(processingTime="30 seconds")  # Microbatch every 30s
     .table("bronze_events")
 )
+
 
 
 # Step 5: Stream monitoring (optional)
