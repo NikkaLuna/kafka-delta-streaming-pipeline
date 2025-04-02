@@ -47,7 +47,9 @@ This streaming pipeline is orchestrated via Databricks Workflows.
 
 Job: `full_streaming_pipeline`
 
-Visual DAG:
+**Orchestration DAG: Kafka to Delta pipeline via Databricks Workflows**
+This DAG executes ingestion → transformation → monitoring with job task chaining.
+
 
 ![DAG Screenshot](docs/full_pipeline_dag.png)
 
@@ -63,6 +65,8 @@ SELECT * FROM monitor_logs ORDER BY run_time DESC
 ```
 
 ![Monitor Logs Preview](docs/monitor_logs_preview.png)
+
+**Sample Output: monitor_logs Delta Table**
 
 
 <pre> 
