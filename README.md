@@ -51,7 +51,20 @@ Visual DAG:
 
 ![DAG Screenshot](docs/full_pipeline_dag.png)
 
-<pre> ```bash
+
+## Streaming Observability
+
+This pipeline logs late/stale event metrics to a Delta table called `monitor_logs`.
+
+You can inspect this table using:
+
+```sql
+SELECT * FROM monitor_logs ORDER BY run_time DESC
+
+![Monitor Logs Preview](docs/monitor_logs_preview.png)
+
+
+<pre> ```
 ## Project Structure
 
 kafka-delta-streaming-pipeline/
