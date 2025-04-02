@@ -19,6 +19,25 @@ Confluent Kafka → PySpark Structured Streaming → Bronze Delta Table → Silv
 - Kafka credentials redacted using `.env.template` or secrets
 - Professionally annotated code with inline documentation
 
+## Workflow Orchestration (Databricks Workflows)
+
+This pipeline is fully orchestrated using [Databricks Workflows](https://docs.databricks.com/workflows/index.html), 
+automating the complete flow from Kafka ingestion to data quality monitoring.
+
+Orchestrated Job Name: `full_streaming_pipeline`
+
+It includes the following chained tasks:
+
+1. `01_stream_kafka_to_bronze` – reads real-time events from Kafka and writes to a Delta Bronze table  
+2. `02_bronze_to_silver_cleanse` – parses, deduplicates, and optimizes data into the Silver layer  
+3. `03_monitor_silver_events` – monitors stream freshness and logs late events for observability
+
+You can view the exported JSON definition of the DAG [here](jobs/full_streaming_pipeline.json).
+
+File path:
+```bash
+jobs/full_streaming_pipeline.json
+
 ## Project Structure
 
 kafka-delta-streaming-pipeline/
