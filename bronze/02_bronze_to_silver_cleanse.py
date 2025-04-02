@@ -17,16 +17,20 @@ Steps:
 Used in: Kafka → Delta → MLflow pipeline (portfolio project)
 """
 
+
 # Step 1: Read from Bronze Delta table (batch mode)
 df_bronze = spark.read.table("bronze_events")
 
 print(f"Bronze record count: {df_bronze.count()}")
 
 
+
 # Step 2: Schema enforcement and cleansing
 
 # Filter out invalid or incomplete records
 from pyspark.sql.functions import col
+
+# Silver Table Cleansing Step
 
 df_cleaned = (
     df_bronze
@@ -35,7 +39,18 @@ df_cleaned = (
     .filter(col("event_type").isin("click", "purchase", "view"))
 )
 
+# Drop duplicates (based on event_id + timestamp)
+df_cleaned = df_cleaned.dropDuplicates(["event_id", "timestamp"])
+
+# Optional: Select only relevant cleaned columns
+df_cleaned = df_cleaned.select("event_id", "event_type", "timestamp")
+
+# Show top 10 cleaned records
+df_cleaned.show(10, truncate=False)  # Or use display(df_cleaned.limit(10)) in notebook
+
 print(f"Cleaned record count: {df_cleaned.count()}")
+
+
 
 # Step 3: Deduplicate by event_id, keeping most recent timestamp
 from pyspark.sql.window import Window
@@ -53,10 +68,6 @@ df_deduped = (
 print(f"Deduplicated record count: {df_deduped.count()}")
 
 
-from pyspark.sql.window import Window
-from pyspark.sql.functions import row_number
-
-
 
 # Step 4: Write to Silver Delta table (partitioned by event_type)
 # Write cleaned, deduplicated records to Silver Delta table (partitioned by event_type)
@@ -68,6 +79,8 @@ from pyspark.sql.functions import row_number
     .option("mergeSchema", "true")
     .saveAsTable("silver_events")
 )
+
+
 
 # Step 5: Optimization guidance 
 # Post-Write Optimization (run manually in %sql cells inside Databricks)
@@ -81,9 +94,12 @@ from pyspark.sql.functions import row_number
 #   'delta.autoOptimize.autoCompact' = true
 # );
 
+
+
 # Step 6: Enable Adaptive Query Execution (typically cluster-level config)
 spark.conf.set("spark.sql.adaptive.enabled", "true")
 spark.conf.set("spark.sql.adaptive.shuffle.targetPostShuffleInputSize", "64MB")
+
 
 
 # Step 7: Sample validation query (run in SQL cell)
