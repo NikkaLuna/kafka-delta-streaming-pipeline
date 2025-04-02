@@ -51,6 +51,7 @@ Job: `full_streaming_pipeline`
 This DAG executes ingestion → transformation → monitoring with job task chaining.
 
 
+
 ![DAG Screenshot](docs/full_pipeline_dag.png)
 
 
@@ -65,8 +66,20 @@ SELECT * FROM monitor_logs ORDER BY run_time DESC
 ```
 
 ![Monitor Logs Preview](docs/monitor_logs_preview.png)
-
 **Sample Output: monitor_logs Delta Table**
+
+
+## Cluster Usage Tracking (Cost Control)
+
+This pipeline logs manual cluster usage into a Delta table called `cluster_logs` for observability and cost awareness.
+
+```sql
+SELECT * FROM cluster_logs ORDER BY end_time DESC
+```
+
+![Cluster Logs Preview](docs/cluster_logs_preview.png)  
+**Sample Output: cluster_logs Delta Table for task-level resource tracking**
+
 
 
 <pre> 
