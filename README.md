@@ -32,19 +32,24 @@ It includes the following chained tasks:
 2. `02_bronze_to_silver_cleanse` – parses, deduplicates, and optimizes data into the Silver layer  
 3. `03_monitor_silver_events` – monitors stream freshness and logs late events for observability
 
-You can view the exported JSON definition of the DAG [here](jobs/full_streaming_pipeline.json).
+You can also explore the DAG config here: [`jobs/full_streaming_pipeline.json`](jobs/full_streaming_pipeline.json)
+
 
 File path:
 
 ```bash
 jobs/full_streaming_pipeline.json
+``` 
 
-## Streaming Observability
+## Workflow DAG (Databricks Workflows)
 
-This pipeline logs late/stale event metrics to a Delta table called `monitor_logs`.
+This streaming pipeline is orchestrated via Databricks Workflows.
 
-```sql
-SELECT * FROM monitor_logs ORDER BY run_time DESC
+Job: `full_streaming_pipeline`
+
+Visual DAG:
+
+![DAG Screenshot](docs/full_pipeline_dag.png)
 
 
 ## Project Structure
