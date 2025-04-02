@@ -1,4 +1,5 @@
 # Databricks notebook source
+
 # -------------------------------------------
 # Silver Table Stream Monitor with Delta Logging
 #
@@ -25,10 +26,19 @@ if late_count > 0:
 else:
     print("No late events. Stream is healthy.")
 
-# Log result to monitor_logs Delta table
+# Log late_count to Delta for monitoring visibility
 monitor_df = spark.createDataFrame([
     Row(run_time=datetime.utcnow(), late_events=late_count)
 ])
 
 monitor_df.write.mode("append").format("delta").saveAsTable("monitor_logs")
+
+# COMMAND ----------
+
+# Optional Preview Query
+# Run this cell to quickly inspect the logged monitoring metrics
+
+# In notebook format use a SQL cell instead:
+# %sql
+# SELECT * FROM monitor_logs ORDER BY run_time DESC
 
