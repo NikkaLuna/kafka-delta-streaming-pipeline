@@ -1,6 +1,5 @@
 # Databricks notebook source
 
-
 """
 02_bronze_to_silver_cleanse.py
 
@@ -17,47 +16,38 @@ Steps:
 Used in: Kafka → Delta → MLflow pipeline (portfolio project)
 """
 
+# Step 0: Enable Adaptive Query Execution + Tuning
+spark.conf.set("spark.sql.adaptive.enabled", "true")
+spark.conf.set("spark.sql.adaptive.shuffle.targetPostShuffleInputSize", "64MB")
+spark.conf.set("spark.sql.shuffle.partitions", "64")  # Week 5 tuning
+
 
 # Step 1: Read from Bronze Delta table (batch mode)
 df_bronze = spark.read.table("bronze_events")
-
 print(f"Bronze record count: {df_bronze.count()}")
 
 
-
 # Step 2: Schema enforcement and cleansing
-
-# Filter out invalid or incomplete records
 from pyspark.sql.functions import col
-
-# Silver Table Cleansing Step
 
 df_cleaned = (
     df_bronze
     .filter(col("event_id").isNotNull())
     .filter(col("timestamp").isNotNull())
     .filter(col("event_type").isin("click", "purchase", "view"))
+    .dropDuplicates(["event_id", "timestamp"])
+    .select("event_id", "event_type", "timestamp")
 )
 
-# Drop duplicates (based on event_id + timestamp)
-df_cleaned = df_cleaned.dropDuplicates(["event_id", "timestamp"])
-
-# Optional: Select only relevant cleaned columns
-df_cleaned = df_cleaned.select("event_id", "event_type", "timestamp")
-
-# Show top 10 cleaned records
-df_cleaned.show(10, truncate=False)  # Or use display(df_cleaned.limit(10)) in notebook
-
+df_cleaned.show(10, truncate=False)
 print(f"Cleaned record count: {df_cleaned.count()}")
 
 
-
-# Step 3: Deduplicate by event_id, keeping most recent timestamp
+# Step 3: Deduplicate by event_id (keep latest timestamp)
 from pyspark.sql.window import Window
 from pyspark.sql.functions import row_number
 
 window_spec = Window.partitionBy("event_id").orderBy(col("timestamp").desc())
-
 df_deduped = (
     df_cleaned
     .withColumn("rn", row_number().over(window_spec))
@@ -68,9 +58,16 @@ df_deduped = (
 print(f"Deduplicated record count: {df_deduped.count()}")
 
 
+# Step 4: Explain physical plan (for performance insight)
+df_deduped.explain(mode="formatted")
 
-# Step 4: Write to Silver Delta table (partitioned by event_type)
-# Write cleaned, deduplicated records to Silver Delta table (partitioned by event_type)
+
+# Step 5: Write to Silver table with benchmarking
+from datetime import datetime
+import time
+from pyspark.sql import Row
+
+start = time.time()
 
 df_deduped = df_deduped.withWatermark("timestamp", "5 minutes")
 
@@ -86,38 +83,25 @@ df_deduped = df_deduped.withWatermark("timestamp", "5 minutes")
     .table("silver_events")
 )
 
+end = time.time()
+print(f"Elapsed time: {end - start:.2f} seconds")
 
 
+# Step 6: Log write benchmark to Delta
+benchmark_df = spark.createDataFrame([
+    Row(task="silver_write", elapsed_seconds=end - start, run_time=datetime.utcnow())
+])
+benchmark_df.write.mode("append").format("delta").saveAsTable("benchmark_logs")
 
-# Step 5: Optimization guidance 
-# Post-Write Optimization (run manually in %sql cells inside Databricks)
 
+# Step 7: (Optional) Run manual post-write optimizations
 # %sql
 # OPTIMIZE silver_events ZORDER BY (timestamp);
-
-# %sql
 # ALTER TABLE silver_events SET TBLPROPERTIES (
 #   'delta.autoOptimize.optimizeWrite' = true,
 #   'delta.autoOptimize.autoCompact' = true
-# );
+# )
 
-
-
-# Step 6: Enable Adaptive Query Execution (typically cluster-level config)
-spark.conf.set("spark.sql.adaptive.enabled", "true")
-spark.conf.set("spark.sql.adaptive.shuffle.targetPostShuffleInputSize", "64MB")
-
-
-
-# Step 7: Sample validation query (run in SQL cell)
+# Step 8: Validate Silver Layer (run in SQL)
 # %sql
-# SELECT *
-# FROM silver_events
-# WHERE event_type = 'click'
-#   AND timestamp >= '2025-04-01'
-# ORDER BY timestamp DESC
-# LIMIT 50;
-
-
-
-
+# SELECT * FROM silver_events WHERE event_type = 'click' ORDER BY timestamp DESC LIMIT 50;
