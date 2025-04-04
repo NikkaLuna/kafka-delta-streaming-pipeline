@@ -54,6 +54,11 @@ This DAG executes ingestion → transformation → monitoring with job task chai
 
 ![DAG Screenshot](docs/full_pipeline_dag.png)
 
+## Engineering Insights
+
+In addition to building the streaming pipeline, the following enhancements were made to simulate real-world production observability and performance tuning.
+
+
 
 ## Streaming Observability
 
@@ -69,6 +74,8 @@ SELECT * FROM monitor_logs ORDER BY run_time DESC
 **Sample Output: monitor_logs Delta Table**
 
 
+
+
 ## Cluster Usage Tracking (Cost Control)
 
 This pipeline logs manual cluster usage into a Delta table called `cluster_logs` for observability and cost awareness.
@@ -80,6 +87,16 @@ SELECT * FROM cluster_logs ORDER BY end_time DESC
 ![Cluster Logs Preview](docs/cluster_logs_preview.png)  
 **Sample Output: cluster_logs Delta Table for task-level resource tracking**
 
+
+## Performance Optimization (Spark UI)
+
+This pipeline was benchmarked and optimized using the Spark UI and physical plans.
+
+**Job-Level Execution Overview**
+![Spark Jobs Screenshot](docs/spark_silver_write_jobs.png)
+
+**Stage-Level Insight: Silver Write Task**
+![Stage Detail Screenshot](docs/spark_stage_silver_write.png)
 
 
 <pre> 
