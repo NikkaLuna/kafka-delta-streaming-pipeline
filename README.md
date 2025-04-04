@@ -99,6 +99,15 @@ This pipeline was benchmarked and optimized using the Spark UI and physical plan
 ![Stage Detail Screenshot](docs/spark_stage_silver_write.png)
 
 
+## Spark Physical Plan
+
+This project uses Spark’s physical plan inspection to understand and optimize the Silver layer transformation.
+
+Output of `df_deduped.explain(mode="formatted")` before writing to `silver_events`:
+
+![Spark Physical Plan – Silver Write](docs/physical_plan_silver_write.png)
+
+
 <pre> 
 ## Project Structure
 
