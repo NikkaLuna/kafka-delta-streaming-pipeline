@@ -10,6 +10,16 @@ A real-time, cloud-native data engineering pipeline that ingests, processes, and
 
 Confluent Kafka → PySpark Structured Streaming → Bronze Delta Table → Silver Layer → MLflow Inference → Gold Table
 
+
+## Architecture
+
+This pipeline simulates a real-time ETL system using:
+- Kafka (Confluent Cloud) for streaming ingestion
+- PySpark Structured Streaming for real-time processing
+- Delta Lake (Databricks) for transactional storage
+- Databricks Workflows for orchestration
+
+
 ## Features Implemented (Sprint 1)
 
 - Ingests synthetic events from Confluent Cloud Kafka
@@ -149,6 +159,17 @@ kafka-delta-streaming-pipeline/
 * Batch inference to Gold layer
 * Spark tuning and cost control
 * Final repo cleanup, documentation, and demo video
+
+## Cost + Infra Optimization (Sprint 4–5)
+
+To simulate cloud-scale engineering and cost-awareness, this project includes:
+- Spot instances + auto-termination on Databricks clusters
+- Logging cluster usage to Delta (`cluster_logs`)
+- Lightweight benchmarking to track performance (`benchmark_logs`)
+- Partitioning + ZORDER to reduce query cost
+
+This mirrors best practices used in production streaming systems.
+
 
 ## Certification Alignment
 
