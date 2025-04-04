@@ -71,17 +71,12 @@ start = time.time()
 
 df_deduped = df_deduped.withWatermark("timestamp", "5 minutes")
 
-(
-    df_deduped.writeStream
-    .format("delta")
-    .outputMode("append")
-    .partitionBy("event_type")
-    .option("mergeSchema", "true")
-    .option("checkpointLocation", "/dbfs/checkpoints/bronze_to_silver")
-    .option("maxBytesPerTrigger", "5mb")
-    .trigger(processingTime="30 seconds")
-    .table("silver_events")
-)
+df_deduped.write \
+    .format("delta") \
+    .mode("overwrite") \
+    .partitionBy("event_type") \
+    .option("mergeSchema", "true") \
+    .saveAsTable("silver_events")
 
 end = time.time()
 print(f"Elapsed time: {end - start:.2f} seconds")
