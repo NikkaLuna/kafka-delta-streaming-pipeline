@@ -135,6 +135,7 @@ Output of `df_deduped.explain(mode="formatted")` before writing to `silver_event
 
 This stage uses an Isolation Forest model (via `scikit-learn`) to detect anomalies in curated Silver Delta Lake events. Inference results are stored in the Gold layer and visualized.
 
+
 ### Pipeline Highlights
 
 -   Trained `IsolationForest` on features: `value`, `timestamp_unix`
