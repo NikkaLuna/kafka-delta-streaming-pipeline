@@ -6,9 +6,15 @@ A real-time, cloud-native data engineering pipeline that ingests, processes, and
 
 **Goal:** Build a robust AI-enabled ETL pipeline with Confluent Kafka, Azure Databricks, Delta Lake, and MLflow. This project follows data engineering best practices with a focus on performance, modularity, and cost-aware architecture.
 
+
 ## End-to-End Flow
 
 Confluent Kafka → PySpark Structured Streaming → Bronze Delta Table → Silver Layer → MLflow Inference → Gold Table
+
+![Kafka → Delta Lake MLflow Pipeline Architecture](docs/MLFLOW_DIAGRAM.png)
+
+**Diagram:** End-to-end architecture of the Kafka-to-Delta streaming pipeline with MLflow integration for batch inference.  
+Includes ingestion (Bronze), transformation (Silver), model scoring, and Gold-layer output for monitoring and downstream consumption.
 
 
 ## Architecture
@@ -131,7 +137,7 @@ Output of `df_deduped.explain(mode="formatted")` before writing to `silver_event
 ![Spark Physical Plan – Silver Write](docs/physical_plan_silver_write.png)
 
 
-### ML Inference & Anomaly Detection
+## ML Inference & Anomaly Detection
 
 This stage uses an Isolation Forest model (via `scikit-learn`) to detect anomalies in curated Silver Delta Lake events. Inference results are stored in the Gold layer and visualized.
 
