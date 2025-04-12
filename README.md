@@ -17,6 +17,23 @@ Confluent Kafka → PySpark Structured Streaming → Bronze Delta Table → Silv
 Includes ingestion (Bronze), transformation (Silver), model scoring, and Gold-layer output for monitoring and downstream consumption.
 
 
+## Contents
+- [Project Overview](#project-overview)
+- [End-to-End Flow](#end-to-end-flow)
+- [Architecture](#architecture)
+- [Features Implemented (Sprint 1)](#features-implemented-sprint-1)
+- [Workflow Orchestration (Databricks Workflows)](#workflow-orchestration-databricks-workflows)
+- [Engineering Insights](#engineering-insights)
+- [Performance & Observability](#performance-optimization-spark-ui)
+- [Write Performance Benchmarking](#write-performance-benchmarking)
+- [Spark Physical Plan](#spark-physical-plan)
+- [ML Inference & Anomaly Detection](#ml-inference--anomaly-detection)
+- [Inference Results & Output Layer](#inference-results--output-layer)
+- [Cost Optimization](#cost--infra-optimization-sprint-4–5)
+- [Project Structure](#project-structure)
+- [Certification Alignment](#certification-alignment)
+
+
 ## Architecture
 
 This pipeline simulates a real-time ETL system using:
@@ -141,54 +158,92 @@ Output of `df_deduped.explain(mode="formatted")` before writing to `silver_event
 
 ![Spark Physical Plan – Silver Write](docs/physical_plan_silver_write.png)
 
-
 ## ML Inference & Anomaly Detection
 
 This stage uses an Isolation Forest model (via `scikit-learn`) to detect anomalies in curated Silver Delta Lake events. Inference results are stored in the Gold layer and visualized.
 
+---
 
 ### Pipeline Highlights
 
--   Trained `IsolationForest` on features: `value`, `timestamp_unix`
+- Trained `IsolationForest` on features: `value`, `timestamp_unix`
+- Logged model to MLflow (with input signature)
+- Tracked parameters (`contamination`, `features`) and training record count
+- Registered model in MLflow Model Registry
+- Scored over 1,000 Silver events and generated:
+  - `anomaly_score`: continuous score
+  - `anomaly_flag`: binary (`-1` = anomaly, `1` = normal)
+- Wrote results to `gold_anomaly_predictions` and `gold_events_scored` Delta tables
 
--   Logged model to MLflow (with input signature)
-
--   Tracked parameters (`contamination`, `features`) and training record count
-
--   Registered model in MLflow Model Registry
-
--   Scored over 1,000 Silver events and generated:
-
-    -   `anomaly_score`: continuous score
-
-    -   `anomaly_flag`: binary (`-1` = anomaly, `1` = normal)
-
--   Wrote results to `gold_anomaly_predictions` Delta table
-
+---
 
 ### MLflow Model Logging
 
 The trained model was logged to MLflow with:
 
--   Input signature via `input_example`
+- Input signature via `input_example`
+- Parameters: contamination rate, feature names
+- Metric: number of training records
+- Registered in MLflow for versioned lifecycle management
 
--   Parameters: contamination rate, feature names
-
--   Metric: number of training records
-
--   Registered in MLflow for versioned lifecycle management
-
-**Model Name:** `iforest_silver_anomaly_detector`\
-**Version:** 1\
-**Registry Scope:** Workspace\
+**Model Name:** `iforest_silver_anomaly_detector`  
+**Version:** 1  
+**Registry Scope:** Workspace  
 **Owner:** Andrea Hayes
 
 ![MLflow Model Logging](docs/mlflow_model_logging.png)
 
-* * * * *
+---
 
+### 🧾 MLflow Model Registry
 
-### Inference Results (Gold Layer)
+This project uses the **MLflow Model Registry** to manage lifecycle stages of trained models.
+
+The Isolation Forest model (`iforest_silver_anomaly_detector`) is logged and registered with:
+
+- **Version control** (e.g. Version 1)
+- **Owner metadata**
+- **Workspace-level visibility**
+
+This registry entry enables reproducible scoring, auditing, and deployment to other environments.
+
+![MLflow Model Registry](docs/mlflow_model_registry.png)  
+**Sample Output:** MLflow registry UI showing the registered Isolation Forest model and its version metadata.
+
+---
+
+### 📈 MLflow Tracking – Batch Inference
+
+This MLflow run captures metrics, parameters, and artifacts logged during the Silver → Gold scoring pipeline. It tracks the input schema, average anomaly score, and links directly to the registered model.
+
+![MLflow run overview](docs/mlflow_run_overview.png)  
+**Sample Output:** MLflow run UI showing metadata, parameters, and source notebook used for inference.
+
+---
+
+### 📊 MLflow Tracked Metrics
+
+MLflow metrics for the batch inference run (`Batch Inference: Silver to Gold`):
+
+- **1020 events scored**
+- **Average anomaly score: 0.80**
+
+These metrics are automatically logged and versioned for every pipeline run, enabling reproducibility, performance tracking, and model monitoring.
+
+![MLflow Tracked Metrics](docs/mlflow_metrics_visualized.png)
+
+---
+
+### Sample Inference Output
+
+This preview shows scored user interaction events from the Silver table. Anomaly scores are generated via an Isolation Forest model logged and deployed with MLflow.
+
+![Sample Scored Events](docs/scored_events_preview.png)
+
+---
+
+### Inference Results & Output Layer
+
 
 #### Gold Delta Table
 
@@ -215,6 +270,40 @@ LIMIT 20
 
 ![Anomaly Score Histogram](docs/anomaly_score_hist.png)  
 **Sample Output:** Distribution of Isolation Forest anomaly scores — left tail indicates flagged outliers.
+
+
+#### Gold Table Output – Scored Events
+
+![Gold Table Output](docs/gold_table_preview.png)
+
+Final output written to the `gold_events_scored` Delta table using Structured Streaming.
+
+Includes event ID, type, timestamp, and original value — enriched with MLflow-inferred anomaly scores.
+
+Partitioned by `event_type` and includes metadata such as `inference_ts` and `mlflow_run_id` (not shown).
+
+
+#### Anomaly Detection Visuals
+
+Confusion matrix and anomaly score distribution from Isolation Forest predictions.  
+Threshold-based labeling enables binary classification from unsupervised scores.
+
+![Anomaly Detection Visuals](docs/anomaly_eval_visuals.png)
+
+
+### Delta Gold Table + Audit History
+
+The ML inference results are written to a partitioned Delta table called `gold_events_scored`.  
+This screenshot highlights how **Delta Lake tracks full lineage and version history** using:
+
+- `anomaly_score` output  
+- Inference timestamp  
+- Associated `mlflow_run_id` for reproducibility
+
+The `DESCRIBE HISTORY` command provides **auditable tracking** of every write, including the operation, user, and schema evolution.
+
+![Gold Delta Output + History](docs/gold_write_and_history.png)
+
 
 
 <pre> 
