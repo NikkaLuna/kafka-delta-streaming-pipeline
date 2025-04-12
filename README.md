@@ -11,7 +11,7 @@ A real-time, cloud-native data engineering pipeline that ingests, processes, and
 
 Confluent Kafka → PySpark Structured Streaming → Bronze Delta Table → Silver Layer → MLflow Inference → Gold Table
 
-![Kafka → Delta Lake MLflow Pipeline Architecture](docs/MLFLOW_DIAGRAM.png)
+![Kafka → Delta Lake MLflow Pipeline Architecture](docs/mlflow_diagram.png)
 
 **Diagram:** End-to-end architecture of the Kafka-to-Delta streaming pipeline with MLflow integration for batch inference.  
 Includes ingestion (Bronze), transformation (Silver), model scoring, and Gold-layer output for monitoring and downstream consumption.
@@ -104,15 +104,20 @@ SELECT * FROM cluster_logs ORDER BY end_time DESC
 **Sample Output: cluster_logs Delta Table for task-level resource tracking**
 
 
+
 ## Performance Optimization (Spark UI)
 
 This pipeline was benchmarked and optimized using the Spark UI and physical plans.
 
-**Job-Level Execution Overview**
-![Spark Jobs Screenshot](docs/spark_silver_write_jobs.png)
+### Job-Level Execution Overview
 
-**Stage-Level Insight: Silver Write Task**
-![Stage Detail Screenshot](docs/spark_stage_silver_write.png)
+![Spark Job Screenshot – Silver Write Overview](docs/spark_silver_write_jobs.png)  
+*Spark UI job overview for the silver write benchmarking step.*
+
+### Stage-Level Insight: Silver Write Task
+
+![Spark Stage Detail – Task Execution](docs/spark_stage_silver_write.png)  
+*Stage-level Spark UI view showing I/O and task distribution for the silver write operation.*
 
 
 ## Write Performance Benchmarking 
