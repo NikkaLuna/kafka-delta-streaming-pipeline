@@ -109,6 +109,18 @@ This pipeline was benchmarked and optimized using the Spark UI and physical plan
 ![Stage Detail Screenshot](docs/spark_stage_silver_write.png)
 
 
+## Write Performance Benchmarking 
+
+This project logs the runtime of key transformations (like Silver writes) to a Delta table called `benchmark_logs`.
+
+```sql
+SELECT * FROM benchmark_logs ORDER BY run_time DESC
+
+![Benchmark Logs – Silver Write Duration](docs/benchmark_logs_preview.png)
+**Sample Output:** `benchmark_logs` table showing runtime duration for the `silver_write` task.
+
+
+
 ## Spark Physical Plan
 
 This project uses Spark’s physical plan inspection to understand and optimize the Silver layer transformation.
