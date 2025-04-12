@@ -115,6 +115,7 @@ This project logs the runtime of key transformations (like Silver writes) to a D
 
 ```sql
 SELECT * FROM benchmark_logs ORDER BY run_time DESC
+```
 
 ![Benchmark Logs – Silver Write Duration](docs/benchmark_logs_preview.png)
 **Sample Output:** `benchmark_logs` table showing runtime duration for the `silver_write` task.
@@ -128,6 +129,80 @@ This project uses Spark’s physical plan inspection to understand and optimize 
 Output of `df_deduped.explain(mode="formatted")` before writing to `silver_events`:
 
 ![Spark Physical Plan – Silver Write](docs/physical_plan_silver_write.png)
+
+
+### ML Inference & Anomaly Detection
+
+This stage uses an Isolation Forest model (via `scikit-learn`) to detect anomalies in curated Silver Delta Lake events. Inference results are stored in the Gold layer and visualized.
+
+### Pipeline Highlights
+
+-   Trained `IsolationForest` on features: `value`, `timestamp_unix`
+
+-   Logged model to MLflow (with input signature)
+
+-   Tracked parameters (`contamination`, `features`) and training record count
+
+-   Registered model in MLflow Model Registry
+
+-   Scored over 1,000 Silver events and generated:
+
+    -   `anomaly_score`: continuous score
+
+    -   `anomaly_flag`: binary (`-1` = anomaly, `1` = normal)
+
+-   Wrote results to `gold_anomaly_predictions` Delta table
+
+
+### MLflow Model Logging
+
+The trained model was logged to MLflow with:
+
+-   Input signature via `input_example`
+
+-   Parameters: contamination rate, feature names
+
+-   Metric: number of training records
+
+-   Registered in MLflow for versioned lifecycle management
+
+**Model Name:** `iforest_silver_anomaly_detector`\
+**Version:** 1\
+**Registry Scope:** Workspace\
+**Owner:** Andrea Hayes
+
+![MLflow Model Logging](docs/mlflow_model_logging.png)
+
+* * * * *
+
+
+### Inference Results (Gold Layer)
+
+#### Gold Delta Table
+
+![Gold Delta Table](docs/gold_delta_predictions.png)  
+**Sample Output:** A preview of the `gold_anomaly_predictions` Delta table with anomaly scores and flags.
+
+
+#### Top Anomaly Query
+
+```sql
+SELECT * 
+FROM gold_anomaly_predictions 
+WHERE anomaly_flag = -1 
+ORDER BY anomaly_score ASC 
+LIMIT 20
+```
+
+![Top Anomalies Query](docs/top_anomalies_query.png)  
+
+**Sample Output:** Top 20 most anomalous events scored by the Isolation Forest model.
+
+
+#### Anomaly Score Distribution
+
+![Anomaly Score Histogram](docs/anomaly_score_hist.png)  
+**Sample Output:** Distribution of Isolation Forest anomaly scores — left tail indicates flagged outliers.
 
 
 <pre> 
