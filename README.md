@@ -10,9 +10,9 @@ The project website is hosted on AWS S3 using static site hosting, fronted by Cl
 - CloudFront with HTTPS (SSL certificate)  
 - Route 53 for domain and DNS routing
 
-For more detailed information about the project, please visit the [project website](https://kafka-delta-pipeline.andreahayes-dev.com/).
+For more detailed information, please visit the [project website](https://kafka-delta-pipeline.andreahayes-dev.com/).
 
-For a video walkthrough, please visit the [video walkthrough](https://kafka-delta-pipeline.andreahayes-dev.com/video.html).
+For a video demonstration, please visit the [video walkthrough](https://kafka-delta-pipeline.andreahayes-dev.com/video.html).
 
 ## End-to-End Flow
 
@@ -21,7 +21,6 @@ Confluent Kafka → PySpark Structured Streaming → Bronze Delta Table → Silv
 ![Kafka → Delta Lake MLflow Pipeline Architecture](docs/mlflow_diagram.png)
 
 **Diagram:** End-to-end architecture of the Kafka-to-Delta streaming pipeline with MLflow integration for batch inference.  
-Includes ingestion (Bronze), transformation (Silver), model scoring, and Gold-layer output for monitoring and downstream consumption.
 
 
 ## Contents
