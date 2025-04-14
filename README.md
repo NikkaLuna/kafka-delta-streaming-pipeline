@@ -6,6 +6,9 @@ A real-time, cloud-native data engineering pipeline that ingests, processes, and
 
 **Goal:** Build a robust AI-enabled ETL pipeline with Confluent Kafka, Azure Databricks, Delta Lake, and MLflow. This project follows data engineering best practices with a focus on performance, modularity, and cost-aware architecture.
 
+For more detailed information about the project, please visit the [project website](https://kafka-delta-pipeline.andreahayes-dev.com/).
+
+For a video walkthrough, please visit the [video walkthrough](https://kafka-delta-pipeline.andreahayes-dev.com/).
 
 ## End-to-End Flow
 
@@ -104,7 +107,7 @@ SELECT * FROM monitor_logs ORDER BY run_time DESC
 ```
 
 ![Monitor Logs Preview](docs/monitor_logs_preview.png)
-**Sample Output: monitor_logs Delta Table**
+*Sample Output: `monitor_logs` Delta Table*
 
 
 
@@ -118,7 +121,7 @@ SELECT * FROM cluster_logs ORDER BY end_time DESC
 ```
 
 ![Cluster Logs Preview](docs/cluster_logs_preview.png)  
-**Sample Output: cluster_logs Delta Table for task-level resource tracking**
+*Sample Output: cluster_logs Delta Table for task-level resource tracking*
 
 
 
@@ -307,22 +310,31 @@ The `DESCRIBE HISTORY` command provides **auditable tracking** of every write, i
 
 
 <pre> 
+
 ## Project Structure
 
 kafka-delta-streaming-pipeline/
 ├── bronze/
-│   └── 01_stream_kafka_to_bronze.py    # Kafka → Bronze ingestion logic
-├── config/
-│   └── .env.template                   # Sample secrets (excluded from Git)
-├── data/
-│   └── synthetic_data_sample.json      # (Optional) simulated event data
-├── docs/
-│   └── README_notes.md                 # Design notes and architecture decisions
-│   └── architecture.png                # Visual pipeline flow diagram (optional)
+│   └── 01_stream_kafka_to_bronze.py         # Kafka → Bronze ingestion logic
+├── silver/
+│   └── 02_bronze_to_silver_cleanse.py       # Parse, deduplicate, and optimize to Silver
+├── gold/
+│   └── 05_batch_inference_to_gold.py        # Batch scoring: Silver → Gold with MLflow model
 ├── utils/
-│   └── kafka_schema.py                 # Reusable schema and validation functions
+│   ├── kafka_schema.py                      # Kafka schema and validation utilities
+│   └── 06_mlflow_inference_logging.py       # MLflow metrics + artifact logging
+├── config/
+│   └── .env.template                         # Sample secrets (excluded from Git)
+├── data/
+│   └── synthetic_data_sample.json            # Optional event data for testing
+├── jobs/
+│   └── full_streaming_pipeline.json          # Databricks Workflows DAG config
+├── docs/
+│   ├── README_notes.md                      # Design notes and architecture decisions
+│   └── [Screenshots + Diagrams]             # Visuals for pipeline, MLflow, Spark UI, and results
 ├── .gitignore
-└── README.md
+└── README.md                                 # Full pipeline documentation
+
  </pre>
 
 ## Sample Kafka Event
