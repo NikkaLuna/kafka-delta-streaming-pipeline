@@ -8,7 +8,7 @@ A real-time, cloud-native data engineering pipeline that ingests, processes, and
 
 For more detailed information about the project, please visit the [project website](https://kafka-delta-pipeline.andreahayes-dev.com/).
 
-For a video walkthrough, please visit the [video walkthrough](https://kafka-delta-pipeline.andreahayes-dev.com/).
+For a video walkthrough, please visit the [video walkthrough](https://kafka-delta-pipeline.andreahayes-dev.com/video.html).
 
 ## End-to-End Flow
 
