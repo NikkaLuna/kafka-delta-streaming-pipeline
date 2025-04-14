@@ -3,7 +3,7 @@
 A real-time, cloud-native data engineering pipeline that ingests, processes, and stores structured event data using Kafka, PySpark, and Delta Lake — purpose-built for portfolio demonstration and Databricks Professional certification prep.
 
 
-**Project Website:**  
+## Project Website 
 The project website is hosted on AWS S3 using static site hosting, fronted by CloudFront for performance and HTTPS support, and configured with Route 53 for a custom domain.
 
 - Static Hosting via S3  
