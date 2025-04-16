@@ -2,6 +2,13 @@
 
 A real-time, cloud-native data engineering pipeline that ingests, processes, and stores structured event data using Kafka, PySpark, and Delta Lake — purpose-built for portfolio demonstration and Databricks Professional certification prep.
 
+## Tech Stack
+
+![Kafka](https://img.shields.io/badge/Kafka-Confluent-orange?logo=apachekafka)
+![Delta Lake](https://img.shields.io/badge/Delta%20Lake-Databricks-blue?logo=databricks)
+![PySpark](https://img.shields.io/badge/PySpark-Streaming-brightgreen?logo=apache-spark)
+![MLflow](https://img.shields.io/badge/MLflow-Tracking%2FInference-lightgrey?logo=mlflow)
+![AWS](https://img.shields.io/badge/AWS-S3%20%2B%20CloudFront-yellow?logo=amazonaws)
 
 ## Project Website 
 The project website is hosted on AWS S3 using static site hosting, fronted by CloudFront for performance and HTTPS support, and configured with Route 53 for a custom domain.
@@ -12,7 +19,7 @@ The project website is hosted on AWS S3 using static site hosting, fronted by Cl
 
 For more detailed information, please visit the [project website](https://kafka-delta-pipeline.andreahayes-dev.com/).
 
-For a video demonstration, please visit the [video walkthrough](https://kafka-delta-pipeline.andreahayes-dev.com/video.html).
+🎥 [**Watch the Video Walkthrough**](https://kafka-delta-pipeline.andreahayes-dev.com/video.html)
 
 ## End-to-End Flow
 
@@ -318,25 +325,28 @@ The `DESCRIBE HISTORY` command provides **auditable tracking** of every write, i
 
 kafka-delta-streaming-pipeline/
 ├── bronze/
-│   └── 01_stream_kafka_to_bronze.py         # Kafka → Bronze ingestion logic
+│   └── 01_stream_kafka_to_bronze.py
 ├── silver/
-│   └── 02_bronze_to_silver_cleanse.py       # Parse, deduplicate, and optimize to Silver
+│   ├── 02_bronze_to_silver_cleanse.py
+│   └── 03_monitor_silver_events.py
 ├── gold/
-│   └── 05_batch_inference_to_gold.py        # Batch scoring: Silver → Gold with MLflow model
+│   ├── 05_batch_inference_to_gold.py
+│   └── 06_mlflow_inference_logging.py
 ├── utils/
-│   ├── kafka_schema.py                      # Kafka schema and validation utilities
-│   └── 06_mlflow_inference_logging.py       # MLflow metrics + artifact logging
+│   ├── kafka_schema.py
+│   └── log_cluster_activity.py
 ├── config/
-│   └── .env.template                         # Sample secrets (excluded from Git)
+│   └── .env.template
 ├── data/
-│   └── synthetic_data_sample.json            # Optional event data for testing
+│   └── synthetic_data_sample.json
 ├── jobs/
-│   └── full_streaming_pipeline.json          # Databricks Workflows DAG config
+│   └── full_streaming_pipeline.json
 ├── docs/
-│   ├── README_notes.md                      # Design notes and architecture decisions
-│   └── [Screenshots + Diagrams]             # Visuals for pipeline, MLflow, Spark UI, and results
+│   ├── README_notes.md
+│   └── [Screenshots + Diagrams]
 ├── .gitignore
-└── README.md                                 # Full pipeline documentation
+└── README.md
+
 
  </pre>
 
