@@ -1,4 +1,4 @@
-# Kafka → Delta Lake Streaming Pipeline (Databricks)
+Kafka → Delta Lake Streaming Pipeline (Databricks)
 
 A real-time, cloud-native data engineering pipeline that ingests, processes, and stores structured event data using Kafka, PySpark, and Delta Lake — purpose-built for portfolio demonstration. 
 
@@ -122,7 +122,6 @@ Job: `full_streaming_pipeline`
 This DAG executes ingestion → transformation → monitoring with job task chaining.
 
 
-
 ![DAG Screenshot](docs/full_pipeline_dag.png)
 
 * * * * *
@@ -190,7 +189,7 @@ SELECT * FROM benchmark_logs ORDER BY run_time DESC
 
 ![Benchmark Logs – Silver Write Duration](docs/benchmark_logs_preview.png)
 
-**Sample Output:** `benchmark_logs` table showing runtime duration for the `silver_write` task.
+*Sample Output: `benchmark_logs` table showing runtime duration for the `silver_write` task.*
 
 * * * * *
 
@@ -255,7 +254,7 @@ This registry entry enables reproducible scoring, auditing, and deployment to ot
 
 ![MLflow Model Registry](docs/mlflow_model_registry.png)  
 
-**Sample Output:** MLflow registry UI showing the registered Isolation Forest model and its version metadata.
+*Sample Output: MLflow registry UI showing the registered Isolation Forest model and its version metadata.*
 
 ---
 
@@ -264,7 +263,9 @@ This registry entry enables reproducible scoring, auditing, and deployment to ot
 This MLflow run captures metrics, parameters, and artifacts logged during the Silver → Gold scoring pipeline. It tracks the input schema, average anomaly score, and links directly to the registered model.
 
 ![MLflow run overview](docs/mlflow_run_overview.png)  
-**Sample Output:** MLflow run UI showing metadata, parameters, and source notebook used for inference.
+
+*Sample Output: MLflow run UI showing metadata, parameters, and source notebook used for inference.*
+
 
 ---
 
@@ -287,7 +288,7 @@ This preview shows scored user interaction events from the Silver table. Anomaly
 
 ![Sample Scored Events](docs/scored_events_preview.png)
 
----
+* * * * *
 
 ### Inference Results & Output Layer
 
@@ -312,14 +313,16 @@ LIMIT 20
 
 ![Top Anomalies Query](docs/top_anomalies_query.png)  
 
-**Sample Output:** Top 20 most anomalous events scored by the Isolation Forest model.
+*Sample Output: Top 20 most anomalous events scored by the Isolation Forest model.*
 
 * * * * *
 
 ### Anomaly Score Distribution
 
 ![Anomaly Score Histogram](docs/anomaly_score_hist.png)  
-**Sample Output:** Distribution of Isolation Forest anomaly scores — left tail indicates flagged outliers.
+
+*Sample Output: Distribution of Isolation Forest anomaly scores — left tail indicates flagged outliers.*
+
 
 * * * * *
 
