@@ -1,8 +1,8 @@
-Kafka → Delta Lake Streaming Pipeline (Databricks)
+# Kafka → Delta Lake Streaming Pipeline (Databricks)
 
 A real-time, cloud-native data engineering pipeline that ingests, processes, and stores structured event data using Kafka, PySpark, and Delta Lake — purpose-built for portfolio demonstration. 
 
-🎓 This project aligns with Databricks Certified Data Engineer Professional objectives.
+This project aligns with Databricks Certified Data Engineer Professional objectives.
 
 
 ## Tech Stack
