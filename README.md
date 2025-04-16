@@ -70,7 +70,6 @@ This pipeline simulates a real-time ETL system using:
 
 🔹 Databricks Workflows for orchestration and automation
 
-* * * * *
 
 ## Features Implemented
 
@@ -110,7 +109,7 @@ File path:
 jobs/full_streaming_pipeline.json
 ``` 
 
-* * * * *
+
 
 ## Workflow DAG (Databricks Workflows)
 
@@ -130,7 +129,7 @@ This DAG executes ingestion → transformation → monitoring with job task chai
 
 In addition to building the streaming pipeline, the following enhancements were made to simulate real-world production observability and performance tuning.
 
-* * * * *
+
 
 ## Streaming Observability
 
@@ -207,7 +206,7 @@ Output of `df_deduped.explain(mode="formatted")` before writing to `silver_event
 
 This stage uses an Isolation Forest model (via `scikit-learn`) to detect anomalies in curated Silver Delta Lake events. Inference results are stored in the Gold layer and visualized.
 
-* * * * *
+
 
 ### Pipeline Highlights
 
