@@ -1,6 +1,9 @@
 # Kafka → Delta Lake Streaming Pipeline (Databricks)
 
-A real-time, cloud-native data engineering pipeline that ingests, processes, and stores structured event data using Kafka, PySpark, and Delta Lake — purpose-built for portfolio demonstration and Databricks Professional certification prep.
+A real-time, cloud-native data engineering pipeline that ingests, processes, and stores structured event data using Kafka, PySpark, and Delta Lake — purpose-built for portfolio demonstration. 
+
+🎓 This project aligns with Databricks Certified Data Engineer Professional objectives.
+
 
 ## Tech Stack
 
@@ -10,16 +13,22 @@ A real-time, cloud-native data engineering pipeline that ingests, processes, and
 ![MLflow](https://img.shields.io/badge/MLflow-Tracking%2FInference-lightgrey?logo=mlflow)
 ![AWS](https://img.shields.io/badge/AWS-S3%20%2B%20CloudFront-yellow?logo=amazonaws)
 
+
 ## Project Website 
-The project website is hosted on AWS S3 using static site hosting, fronted by CloudFront for performance and HTTPS support, and configured with Route 53 for a custom domain.
+This project is fully documented and deployed as a static site using AWS S3, with CloudFront for global distribution and HTTPS, and Route 53 for custom domain routing.
 
-- Static Hosting via S3  
-- CloudFront with HTTPS (SSL certificate)  
-- Route 53 for domain and DNS routing
+🔹 Static Hosting via S3
 
-For more detailed information, please visit the [project website](https://kafka-delta-pipeline.andreahayes-dev.com/).
+🔹 CDN + HTTPS via CloudFront
+
+🔹 Domain routing via Route 53
+
+🔹 Includes: architecture diagrams, MLflow screenshots, notebook previews, and full pipeline breakdown
+
+🌐 [**Explore the Full Project Website**](https://kafka-delta-pipeline.andreahayes-dev.com/)  
 
 🎥 [**Watch the Video Walkthrough**](https://kafka-delta-pipeline.andreahayes-dev.com/video.html)
+
 
 ## End-to-End Flow
 
@@ -50,20 +59,28 @@ Confluent Kafka → PySpark Structured Streaming → Bronze Delta Table → Silv
 ## Architecture
 
 This pipeline simulates a real-time ETL system using:
-- Kafka (Confluent Cloud) for streaming ingestion
-- PySpark Structured Streaming for real-time processing
-- Delta Lake (Databricks) for transactional storage
-- Databricks Workflows for orchestration
+🔹 Kafka (Confluent Cloud) for streaming ingestion
+
+🔹 PySpark Structured Streaming for event processing
+
+🔹 Delta Lake on Databricks for scalable, transactional storage
+
+🔹 Databricks Workflows for orchestration and automation
 
 
 ## Features Implemented (Sprint 1)
 
-- Ingests synthetic events from Confluent Cloud Kafka
-- Parses raw Kafka binary payloads into structured JSON
-- Writes real-time data to Bronze Delta Table (append mode)
-- Uses checkpointing for fault tolerance and replayability
-- Kafka credentials redacted using `.env.template` or secrets
-- Professionally annotated code with inline documentation
+🔹 Ingests synthetic events from Confluent Cloud Kafka
+
+🔹 Parses binary Kafka payloads into structured JSON
+
+🔹 Writes real-time data to a Bronze Delta table (append mode)
+
+🔹 Uses checkpointing for replayability and fault tolerance
+
+🔹 Secure Kafka auth using .env.template and Databricks secrets
+
+🔹 Fully annotated PySpark notebooks for clarity and learning
 
 ## Workflow Orchestration (Databricks Workflows)
 
