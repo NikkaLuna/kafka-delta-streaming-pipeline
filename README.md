@@ -110,6 +110,8 @@ File path:
 jobs/full_streaming_pipeline.json
 ``` 
 
+* * * * *
+
 ## Workflow DAG (Databricks Workflows)
 
 This streaming pipeline is orchestrated via Databricks Workflows.
@@ -291,14 +293,14 @@ This preview shows scored user interaction events from the Silver table. Anomaly
 
 * * * * *
 
-#### Gold Delta Table
+### Gold Delta Table
 
 ![Gold Delta Table](docs/gold_delta_predictions.png)  
 **Sample Output:** A preview of the `gold_anomaly_predictions` Delta table with anomaly scores and flags.
 
 * * * * *
 
-#### Top Anomaly Query
+### Top Anomaly Query
 
 ```sql
 SELECT * 
@@ -314,14 +316,14 @@ LIMIT 20
 
 * * * * *
 
-#### Anomaly Score Distribution
+### Anomaly Score Distribution
 
 ![Anomaly Score Histogram](docs/anomaly_score_hist.png)  
 **Sample Output:** Distribution of Isolation Forest anomaly scores — left tail indicates flagged outliers.
 
 * * * * *
 
-#### Gold Table Output – Scored Events
+### Gold Table Output – Scored Events
 
 ![Gold Table Output](docs/gold_table_preview.png)
 
@@ -333,7 +335,7 @@ Partitioned by `event_type` and includes metadata such as `inference_ts` and `ml
 
 * * * * *
 
-#### Anomaly Detection Visuals
+### Anomaly Detection Visuals
 
 Confusion matrix and anomaly score distribution from Isolation Forest predictions.  
 Threshold-based labeling enables binary classification from unsupervised scores.
@@ -357,9 +359,9 @@ The `DESCRIBE HISTORY` command provides **auditable tracking** of every write, i
 
 * * * * *
 
-<pre> 
 ## Project Structure
 
+<pre> 
 kafka-delta-streaming-pipeline/
 ├── bronze/
 │   └── 01_stream_kafka_to_bronze.py
