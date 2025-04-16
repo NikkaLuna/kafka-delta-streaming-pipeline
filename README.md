@@ -38,6 +38,7 @@ Confluent Kafka → PySpark Structured Streaming → Bronze Delta Table → Silv
 
 **Diagram:** End-to-end architecture of the Kafka-to-Delta streaming pipeline with MLflow integration for batch inference.  
 
+* * * * *
 
 ## Contents
 - [Project Overview](#project-overview)
@@ -55,10 +56,12 @@ Confluent Kafka → PySpark Structured Streaming → Bronze Delta Table → Silv
 - [Project Structure](#project-structure)
 - [Certification Alignment](#certification-alignment)
 
+* * * * *
 
 ## Architecture
 
 This pipeline simulates a real-time ETL system using:
+
 🔹 Kafka (Confluent Cloud) for streaming ingestion
 
 🔹 PySpark Structured Streaming for event processing
@@ -67,8 +70,9 @@ This pipeline simulates a real-time ETL system using:
 
 🔹 Databricks Workflows for orchestration and automation
 
+* * * * *
 
-## Features Implemented (Sprint 1)
+## Features Implemented
 
 🔹 Ingests synthetic events from Confluent Cloud Kafka
 
@@ -81,6 +85,8 @@ This pipeline simulates a real-time ETL system using:
 🔹 Secure Kafka auth using .env.template and Databricks secrets
 
 🔹 Fully annotated PySpark notebooks for clarity and learning
+
+* * * * *
 
 ## Workflow Orchestration (Databricks Workflows)
 
@@ -117,10 +123,11 @@ This DAG executes ingestion → transformation → monitoring with job task chai
 
 ![DAG Screenshot](docs/full_pipeline_dag.png)
 
+* * * * *
+
 ## Engineering Insights
 
 In addition to building the streaming pipeline, the following enhancements were made to simulate real-world production observability and performance tuning.
-
 
 
 ## Streaming Observability
@@ -134,10 +141,11 @@ SELECT * FROM monitor_logs ORDER BY run_time DESC
 ```
 
 ![Monitor Logs Preview](docs/monitor_logs_preview.png)
+
 *Sample Output: `monitor_logs` Delta Table*
 
 
-
+* * * * *
 
 ## Cluster Usage Tracking (Cost Control)
 
@@ -151,6 +159,7 @@ SELECT * FROM cluster_logs ORDER BY end_time DESC
 *Sample Output: cluster_logs Delta Table for task-level resource tracking*
 
 
+* * * * *
 
 ## Performance Optimization (Spark UI)
 
@@ -166,6 +175,7 @@ This pipeline was benchmarked and optimized using the Spark UI and physical plan
 ![Spark Stage Detail – Task Execution](docs/spark_stage_silver_write.png)  
 *Stage-level Spark UI view showing I/O and task distribution for the silver write operation.*
 
+* * * * *
 
 ## Write Performance Benchmarking 
 
@@ -176,9 +186,10 @@ SELECT * FROM benchmark_logs ORDER BY run_time DESC
 ```
 
 ![Benchmark Logs – Silver Write Duration](docs/benchmark_logs_preview.png)
+
 **Sample Output:** `benchmark_logs` table showing runtime duration for the `silver_write` task.
 
-
+* * * * *
 
 ## Spark Physical Plan
 
@@ -192,7 +203,7 @@ Output of `df_deduped.explain(mode="formatted")` before writing to `silver_event
 
 This stage uses an Isolation Forest model (via `scikit-learn`) to detect anomalies in curated Silver Delta Lake events. Inference results are stored in the Gold layer and visualized.
 
----
+* * * * *
 
 ### Pipeline Highlights
 
@@ -205,7 +216,7 @@ This stage uses an Isolation Forest model (via `scikit-learn`) to detect anomali
   - `anomaly_flag`: binary (`-1` = anomaly, `1` = normal)
 - Wrote results to `gold_anomaly_predictions` and `gold_events_scored` Delta tables
 
----
+* * * * *
 
 ### MLflow Model Logging
 
@@ -238,6 +249,7 @@ The Isolation Forest model (`iforest_silver_anomaly_detector`) is logged and reg
 This registry entry enables reproducible scoring, auditing, and deployment to other environments.
 
 ![MLflow Model Registry](docs/mlflow_model_registry.png)  
+
 **Sample Output:** MLflow registry UI showing the registered Isolation Forest model and its version metadata.
 
 ---
@@ -334,10 +346,9 @@ The `DESCRIBE HISTORY` command provides **auditable tracking** of every write, i
 
 ![Gold Delta Output + History](docs/gold_write_and_history.png)
 
-
+* * * * *
 
 <pre> 
-
 ## Project Structure
 
 kafka-delta-streaming-pipeline/
@@ -376,30 +387,57 @@ kafka-delta-streaming-pipeline/
   "value": "1984"
 }
 
-## Roadmap
+* * * * *
 
-### Sprint 1 (Streaming Pipeline Foundations)
-* Kafka cluster + producer simulation
-* Bronze ingestion pipeline with Delta
-* Silver table with filtering and deduplication
-* Delta optimization (ZORDER, partitions)
+Roadmap
+----------
 
-### Sprint 2–4 (Advanced Layers and Inference)
-* MLflow model training and tracking
-* Batch inference to Gold layer
-* Spark tuning and cost control
-* Final repo cleanup, documentation, and demo video
+### **Pipeline Development**
 
-## Cost + Infra Optimization (Sprint 4–5)
+-   **Kafka cluster + producer simulation**\
+    Set up a Kafka cluster for event streaming and simulate event production.
 
-To simulate cloud-scale engineering and cost-awareness, this project includes:
-- Spot instances + auto-termination on Databricks clusters
-- Logging cluster usage to Delta (`cluster_logs`)
-- Lightweight benchmarking to track performance (`benchmark_logs`)
-- Partitioning + ZORDER to reduce query cost
+-   **Bronze Layer Ingestion**\
+    Implemented real-time ingestion of raw Kafka events into the Delta Bronze table.
 
-This mirrors best practices used in production streaming systems.
+-   **Silver Layer Transformation**\
+    Applied transformations to the data (filtering, deduplication) for improved quality and consistency.
 
+-   **Delta Optimization**\
+    Optimized Delta tables using partitioning and ZORDER for better query performance.
+
+### **Advanced Features & ML Integration**
+
+-   **MLflow Model Training & Tracking**\
+    Trained and tracked the Isolation Forest model for anomaly detection using MLflow.
+
+-   **Batch Inference to Gold Layer**\
+    Performed batch scoring on transformed data and wrote inference results to the Gold Delta table.
+
+-   **Spark Performance Tuning**\
+    Focused on Spark optimizations for performance and cost control.
+
+-   **Final Documentation & Demo Video**\
+    Cleaned up the repo, created detailed documentation, and recorded a demo video.
+
+* * * * *
+
+⚡ Cost & Infrastructure Optimization
+------------------------------------
+
+This project includes several cloud-scale optimization techniques for cost control and performance improvement:
+
+-   **Spot Instances + Auto-Termination** on Databricks clusters to minimize costs during idle times.
+
+-   **Cluster Usage Logging** to Delta (`cluster_logs`) for cost awareness and analysis.
+
+-   **Lightweight Benchmarking** to track performance and optimize transformation times (`benchmark_logs`).
+
+-   **Partitioning & ZORDER** for optimized queries and reduced storage cost.
+
+These practices simulate a real-world production environment for cost efficiency and scalability.
+
+* * * * *
 
 ## Certification Alignment
 
