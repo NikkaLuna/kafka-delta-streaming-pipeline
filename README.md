@@ -129,6 +129,7 @@ This DAG executes ingestion → transformation → monitoring with job task chai
 
 In addition to building the streaming pipeline, the following enhancements were made to simulate real-world production observability and performance tuning.
 
+* * * * *
 
 ## Streaming Observability
 
@@ -198,6 +199,8 @@ This project uses Spark’s physical plan inspection to understand and optimize 
 Output of `df_deduped.explain(mode="formatted")` before writing to `silver_events`:
 
 ![Spark Physical Plan – Silver Write](docs/physical_plan_silver_write.png)
+
+* * * * *
 
 ## ML Inference & Anomaly Detection
 
@@ -286,12 +289,14 @@ This preview shows scored user interaction events from the Silver table. Anomaly
 
 ### Inference Results & Output Layer
 
+* * * * *
 
 #### Gold Delta Table
 
 ![Gold Delta Table](docs/gold_delta_predictions.png)  
 **Sample Output:** A preview of the `gold_anomaly_predictions` Delta table with anomaly scores and flags.
 
+* * * * *
 
 #### Top Anomaly Query
 
@@ -307,12 +312,14 @@ LIMIT 20
 
 **Sample Output:** Top 20 most anomalous events scored by the Isolation Forest model.
 
+* * * * *
 
 #### Anomaly Score Distribution
 
 ![Anomaly Score Histogram](docs/anomaly_score_hist.png)  
 **Sample Output:** Distribution of Isolation Forest anomaly scores — left tail indicates flagged outliers.
 
+* * * * *
 
 #### Gold Table Output – Scored Events
 
@@ -324,6 +331,7 @@ Includes event ID, type, timestamp, and original value — enriched with MLflow-
 
 Partitioned by `event_type` and includes metadata such as `inference_ts` and `mlflow_run_id` (not shown).
 
+* * * * *
 
 #### Anomaly Detection Visuals
 
@@ -332,6 +340,7 @@ Threshold-based labeling enables binary classification from unsupervised scores.
 
 ![Anomaly Detection Visuals](docs/anomaly_eval_visuals.png)
 
+* * * * *
 
 ### Delta Gold Table + Audit History
 
@@ -377,6 +386,8 @@ kafka-delta-streaming-pipeline/
 
 
  </pre>
+
+ * * * * *
 
 ## Sample Kafka Event
 
