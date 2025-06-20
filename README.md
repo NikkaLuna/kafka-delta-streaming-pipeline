@@ -30,6 +30,14 @@ This project is fully documented and deployed as a static site using AWS S3, wit
 🎥 [**Watch the Video Walkthrough**](https://kafka-delta-pipeline.andreahayes-dev.com/video.html)
 
 
+## Use Case Context
+
+This pipeline simulates a clickstream analytics use case, where user behavior events — such as view, click, and purchase — are streamed in real-time from a web or mobile app.
+
+It also applies anomaly detection using MLflow to identify unusual patterns in user interactions, such as excessive clicking or bot-like behavior.
+
+This mirrors common use cases in e-commerce and ad tech platforms for detecting fraud, automation, or system misuse.
+
 ## End-to-End Flow
 
 Confluent Kafka → PySpark Structured Streaming → Bronze Delta Table → Silver Layer → MLflow Inference → Gold Table
@@ -291,7 +299,7 @@ This preview shows scored user interaction events from the Silver table. Anomaly
 
 ### Inference Results & Output Layer
 
-* * * * *
+
 
 ### Gold Delta Table
 

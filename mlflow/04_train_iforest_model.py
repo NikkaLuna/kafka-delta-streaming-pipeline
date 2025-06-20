@@ -116,17 +116,30 @@ df_silver.printSchema()
 # COMMAND ----------
 
 # Step 4: Start MLflow Run & Log Model
+
 with mlflow.start_run(run_name="silver_iforest_model") as run:
-    mlflow.spark.log_model(model, "model")
+    
+    input_example = X[0].reshape(1, -1)
+
+    mlflow.sklearn.log_model(
+        model,
+        "model",
+        input_example=input_example  # ✅ Now MLflow will log the schema!
+    )
+
     mlflow.log_param("contamination", 0.1)
     mlflow.log_param("features", ["value", "timestamp_unix"])
     mlflow.log_metric("training_records", df_features.count())
 
     run_id = run.info.run_id
 
+
+
+
 # COMMAND ----------
 
 # Step 5: Register Model
+
 mlflow.register_model(
     model_uri=f"runs:/{run_id}/model",
     name="iforest_silver_anomaly_detector"

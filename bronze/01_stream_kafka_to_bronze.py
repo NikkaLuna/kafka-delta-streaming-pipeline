@@ -1,29 +1,12 @@
 # Databricks notebook source
+# COMMAND ----------
 
-"""
-01_kafka_to_bronze_ingest.py
-
-This notebook ingests real-time Kafka events using Structured Streaming,
-parses the payload, and writes it to a Delta Bronze table.
-
-Steps:
-- Configure Kafka connection
-- Read Kafka topic as streaming source
-- Parse JSON payloads
-- Write to Delta Bronze table with checkpointing
-
-Used in: Kafka → Delta Bronze → Silver → MLflow pipeline
-"""
-
-# Step 1: Kafka connection and stream options
-
-# In production, load secrets via Databricks Secrets or .env
+# Kafka Configuration (Dev Only – Inline Credentials)
 kafka_bootstrap = "pkc-921jm.us-east-2.aws.confluent.cloud:9092"
 kafka_topic = "stream-input"
-kafka_api_key = "YOUR_KAFKA_API_KEY"
-kafka_api_secret = "YOUR_KAFKA_API_SECRET"
+kafka_api_key = "MYDFB2FDNLVV2QLG"  # Replace with your actual API key
+kafka_api_secret = "htVdfSueWUUkvefpM6i2Zu0p7xZ2QatIb+5L2hwQHpIyBY5K2IBb5YqeS0zbzgt1"  # Replace with your actual secret
 
-# Kafka consumer options
 kafka_options = {
     "kafka.bootstrap.servers": kafka_bootstrap,
     "subscribe": kafka_topic,
@@ -34,7 +17,8 @@ kafka_options = {
 }
 
 
-# Step 2: Ingest Kafka stream as raw binary DataFrame
+# COMMAND ----------
+
 df_raw = (
     spark.readStream
     .format("kafka")
@@ -42,50 +26,87 @@ df_raw = (
     .load()
 )
 
-print("Raw Kafka schema:")
 df_raw.printSchema()
 
 
-# Step 3: Parse Kafka JSON payload
+# COMMAND ----------
+
+# Read raw stream from Kafka
+df_raw = (
+    spark.readStream
+    .format("kafka")
+    .options(**kafka_options)
+    .load()
+)
+
+# Show schema to validate payload structure
+df_raw.printSchema()
+
+
+# COMMAND ----------
+
+# COMMAND ----------
 
 from pyspark.sql.types import StructType, StringType, TimestampType
 from pyspark.sql.functions import from_json, col
 
-# Define expected schema of incoming event
+# Define expected schema of Kafka messages
 event_schema = StructType() \
     .add("event_id", StringType()) \
     .add("event_type", StringType()) \
     .add("timestamp", TimestampType()) \
     .add("value", StringType())
 
-# Extract and parse 'value' field as JSON
+# Parse JSON from Kafka 'value' column
 df_parsed = df_raw.select(
     from_json(col("value").cast("string"), event_schema).alias("data")
 ).select("data.*")
 
-print("Parsed schema preview:")
+# Preview parsed schema
 df_parsed.printSchema()
 
 
-# Step 4: Write parsed stream to Bronze Delta table
+# COMMAND ----------
 
+# Stream parsed Kafka JSON into Bronze Delta table
 (
     df_parsed.writeStream
     .format("delta")
     .outputMode("append")
-    .option("checkpointLocation", "/dbfs/checkpoints/kafka_to_bronze")  # Moved from /tmp for stability
-    .option("maxBytesPerTrigger", "5mb")  # Controls per-microbatch load size
-    .trigger(processingTime="30 seconds")  # Microbatch every 30s
+    .option("checkpointLocation", "/tmp/kafka_checkpoint_bronze")  # Use DBFS path in prod
     .table("bronze_events")
 )
 
 
+# COMMAND ----------
 
-# Step 5: Stream monitoring (optional)
+# MAGIC %sql
+# MAGIC SELECT * FROM bronze_events
+# MAGIC ORDER BY timestamp DESC
+# MAGIC LIMIT 20
+# MAGIC
+# MAGIC
+# MAGIC
+# MAGIC
 
-# You can view the streaming query status:
-# spark.streams.active
+# COMMAND ----------
 
-# Or query the Bronze table in a SQL cell:
-# %sql
-# SELECT * FROM bronze_events ORDER BY timestamp DESC LIMIT 20;
+df_parsed.filter(col("value").isNotNull()).writeStream \
+    .format("console") \
+    .option("truncate", False) \
+    .start()
+
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC
+# MAGIC SELECT * FROM bronze_events ORDER BY timestamp DESC LIMIT 10;
+# MAGIC
+# MAGIC
+
+# COMMAND ----------
+
+for stream in spark.streams.active:
+    print(f"Stopping stream: {stream.name}")
+    stream.stop()
