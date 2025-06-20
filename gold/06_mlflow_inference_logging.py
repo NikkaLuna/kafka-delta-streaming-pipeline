@@ -61,6 +61,13 @@ df_features_array = df_features.withColumn("features_array", vector_to_array("fe
 
 # COMMAND ----------
 
+# Convert Spark features to Pandas
+df_pandas = df_features_array.select("features_array").toPandas()
+df_pandas[["value", "timestamp_unix"]] = pd.DataFrame(df_pandas["features_array"].to_list(), columns=["value", "timestamp_unix"])
+
+
+# COMMAND ----------
+
 print("Row count:", df_pandas.shape[0])
 print(df_pandas.head())
 
@@ -244,9 +251,8 @@ print("✅ Inference results written to Delta table: gold_events_scored")
 
 # COMMAND ----------
 
-
 display(
-    scored_df.select(
+    final_df.select(
         "event_id",
         "event_type",
         "value",
@@ -254,6 +260,7 @@ display(
         "anomaly_score"
     )
 )
+
 
 
 

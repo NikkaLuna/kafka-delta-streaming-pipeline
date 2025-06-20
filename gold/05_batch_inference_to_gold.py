@@ -21,7 +21,9 @@ import pandas as pd
 # COMMAND ----------
 
 # Step 2: Load Model from MLflow Registry
-model = mlflow.sklearn.load_model("models:/iforest_silver_anomaly_detector/1")
+mlflow.sklearn.load_model("models:/iforest_silver_anomaly_detector/9")
+
+model = mlflow.sklearn.load_model("models:/iforest_silver_anomaly_detector/9")
 
 # COMMAND ----------
 
