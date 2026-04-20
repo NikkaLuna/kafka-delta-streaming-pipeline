@@ -2,6 +2,8 @@
 
 A production-style streaming data engineering project that ingests clickstream events from Kafka, processes them with PySpark Structured Streaming, stores them in Delta Lake, and applies MLflow-tracked anomaly detection for Gold-layer scoring.
 
+I built this project to practice the kinds of tradeoffs that show up in real streaming systems: checkpointing, observability, write performance, and making downstream outputs reliable enough to use.
+
 ![Kafka](https://img.shields.io/badge/Kafka-Confluent-orange?logo=apachekafka)
 ![Delta Lake](https://img.shields.io/badge/Delta%20Lake-Databricks-blue?logo=databricks)
 ![PySpark](https://img.shields.io/badge/PySpark-Streaming-brightgreen?logo=apache-spark)
@@ -61,6 +63,8 @@ This project highlights several production-minded engineering patterns:
 * * * * *
 
 ## Workflow Orchestration
+
+One of the main goals here was not just to move events from Kafka to Delta, but to make the pipeline easier to monitor and reason about once it was running.
 
 The full pipeline is orchestrated through **Databricks Workflows** using a chained job called `full_streaming_pipeline`.
 
@@ -132,7 +136,7 @@ Key transformation runtimes are logged to `benchmark_logs` to support performanc
 ### Spark UI: Silver Write
 ![Spark Job Screenshot -- Silver Write Overview](docs/spark_silver_write_jobs.png)
 
-Spark UI inspection was used to benchmark and optimize the Silver write stage.
+Spark UI inspection was used to benchmark and optimize the Silver write stage. 
 
 ### MLflow Model Registry
 ![MLflow Model Registry](docs/mlflow_model_registry.png)
@@ -149,6 +153,8 @@ Gold outputs store anomaly predictions and scored events for downstream explorat
 ## Observability and Performance
 
 The pipeline includes multiple observability layers to simulate production-minded streaming operations.
+
+I wanted this project to go beyond “it runs” by looking at how the Silver write actually behaved in Spark and logging runtimes for repeatable comparison.
 
 ### Stream monitoring
 
@@ -197,6 +203,8 @@ This helped validate and optimize the write path before persisting to `silver_ev
 
 This project uses an **Isolation Forest** model to score curated Silver events and write anomaly predictions into Gold Delta tables.
 
+Rather than treat ML inference as a separate demo, I wanted the scoring step to feel like part of the pipeline itself, with tracked runs, registered models, and reproducible outputs.
+
 ### Highlights
 
 -   trained on `value` and `timestamp_unix`
@@ -240,6 +248,8 @@ That makes the Gold layer more credible as a production-style ML-ready output ra
 
 ## Cost and Infrastructure Optimization
 
+I included cost and cluster tracking because in real data platforms, performance is only half the story - how much a workflow costs to run matters too.
+
 This project includes several practical cost/performance controls:
 
 -   **spot instances + auto-termination** on Databricks clusters
@@ -247,7 +257,7 @@ This project includes several practical cost/performance controls:
 -   **benchmark logging** for transformation timing
 -   **partitioning and ZORDER** for query efficiency
 
-These choices help simulate a more realistic production environment.
+These choices help simulate a more realistic production environment. 
 
 ## Sample Kafka Event
 
