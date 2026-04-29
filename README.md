@@ -15,7 +15,6 @@ I built this project to practice the kinds of tradeoffs that show up in real str
 This project is also published as a static site with diagrams, screenshots, notebook previews, and a walkthrough.
 
 - [**Explore the Full Project Website**](https://kafka-delta-pipeline.andreahayes-dev.com/)
-- [**Watch the Video Walkthrough**](https://kafka-delta-pipeline.andreahayes-dev.com/video.html)
 
 ---
 
