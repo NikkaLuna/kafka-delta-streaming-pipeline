@@ -1,6 +1,11 @@
 # Databricks notebook source
 # MAGIC %pip install mlflow
 
+# NOTE:
+# This notebook is experimental/dev-only.
+# The canonical Gold scoring job is:
+# gold/05_batch_inference_to_gold.py
+
 # COMMAND ----------
 
 dbutils.library.restartPython()
