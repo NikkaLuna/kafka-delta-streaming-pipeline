@@ -1,67 +1,86 @@
 # Databricks notebook source
 
-# MAGIC 
-%pip install mlflow
+# COMMAND ----------
 
+# MAGIC %pip install mlflow
 
 # COMMAND ----------
 
 dbutils.library.restartPython()
 
-
 # COMMAND ----------
-
-# Step 1: Imports
 
 import mlflow.sklearn
-from pyspark.sql.functions import unix_timestamp
-import pandas as pd
 
-
-# COMMAND ----------
-
-# Step 2: Load Model from MLflow Registry
-mlflow.sklearn.load_model("models:/iforest_silver_anomaly_detector/9")
-
-model = mlflow.sklearn.load_model("models:/iforest_silver_anomaly_detector/9")
+from pyspark.sql.functions import unix_timestamp, current_timestamp, lit, col
 
 # COMMAND ----------
 
+MODEL_NAME = "iforest_silver_anomaly_detector"
+MODEL_VERSION = "9"
+GOLD_TABLE = "gold_anomaly_predictions"
 
-# Step 3: Load Silver Delta Table & Prepare Features
+# COMMAND ----------
+
+# Load registered Isolation Forest model from MLflow Model Registry
+model_uri = f"models:/{MODEL_NAME}/{MODEL_VERSION}"
+model = mlflow.sklearn.load_model(model_uri)
+
+print(f"Loaded model: {model_uri}")
+
+# COMMAND ----------
+
+# Load Silver Delta table and prepare model features
 df_silver = spark.read.table("silver_events")
 
-df_silver_numeric = (
+df_features = (
     df_silver
     .withColumn("timestamp_unix", unix_timestamp("timestamp"))
-    .dropna(subset=["value", "timestamp_unix"])  # Just in case
+    .withColumn("value", col("value").cast("double"))
+    .dropna(subset=["value", "timestamp_unix"])
+    .select("event_id", "event_type", "timestamp", "value", "timestamp_unix")
 )
 
-# Convert to Pandas for sklearn
-df_pd = df_silver_numeric.select("event_id", "event_type", "timestamp", "value", "timestamp_unix").toPandas()
+print(f"Rows available for scoring: {df_features.count()}")
 
-# Features
+# COMMAND ----------
+
+# Convert to Pandas for sklearn inference
+df_pd = df_features.toPandas()
+
 X = df_pd[["value", "timestamp_unix"]].astype(float)
 
 # COMMAND ----------
 
-# Step 4: Predict Anomalies
+# Score events
 df_pd["anomaly_score"] = model.decision_function(X)
 df_pd["anomaly_flag"] = model.predict(X)
 
-# Convention: -1 = anomaly, 1 = normal
+# Convention:
+# -1 = anomaly
+#  1 = normal
 
 # COMMAND ----------
 
-# Step 5: Save to Gold Delta Table
+# Convert predictions back to Spark DataFrame
 df_gold = spark.createDataFrame(df_pd)
 
+df_gold = (
+    df_gold
+    .withColumn("inference_ts", current_timestamp())
+    .withColumn("mlflow_model_name", lit(MODEL_NAME))
+    .withColumn("mlflow_model_version", lit(MODEL_VERSION))
+)
+
+# COMMAND ----------
+
+# Write scored events to Gold Delta table
 (
     df_gold.write
-    .mode("overwrite")  # Change to append if running repeatedly
+    .mode("overwrite")
     .format("delta")
     .option("overwriteSchema", "true")
-    .saveAsTable("gold_anomaly_predictions")
+    .saveAsTable(GOLD_TABLE)
 )
 
 display(df_gold.limit(10))
@@ -75,7 +94,6 @@ display(df_gold.limit(10))
 # MAGIC WHERE anomaly_flag = -1
 # MAGIC ORDER BY anomaly_score ASC
 # MAGIC LIMIT 20
-# MAGIC
 
 # COMMAND ----------
 
@@ -84,34 +102,15 @@ display(df_gold.limit(10))
 # MAGIC SELECT anomaly_flag, COUNT(*) AS count
 # MAGIC FROM gold_anomaly_predictions
 # MAGIC GROUP BY anomaly_flag
-# MAGIC
 
 # COMMAND ----------
 
-# Histogram of anomaly scores
-import matplotlib.pyplot as plt
-
-df_pd["anomaly_score"].hist(bins=30)
-plt.title("Distribution of Anomaly Scores")
-plt.xlabel("Score")
-plt.ylabel("Frequency")
-plt.show()
-
-
-# COMMAND ----------
-
-with mlflow.start_run(run_name="silver_iforest_model") as run:
-    mlflow.sklearn.log_model(model, "model", input_example=X[:5])
-    mlflow.log_param("contamination", 0.1)
-    mlflow.log_param("features", ["value", "timestamp_unix"])
-    mlflow.log_metric("training_records", len(X))
-
-    run_id = run.info.run_id
-
-
-
-# COMMAND ----------
-
-for stream in spark.streams.active:
-    print(f"Stopping stream: {stream.name}")
-    stream.stop()
+# MAGIC %sql
+# MAGIC -- Daily scoring volume
+# MAGIC SELECT
+# MAGIC   DATE(inference_ts) AS scoring_date,
+# MAGIC   COUNT(*) AS total_events,
+# MAGIC   SUM(CASE WHEN anomaly_flag = -1 THEN 1 ELSE 0 END) AS anomaly_events
+# MAGIC FROM gold_anomaly_predictions
+# MAGIC GROUP BY DATE(inference_ts)
+# MAGIC ORDER BY scoring_date DESC
