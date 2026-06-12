@@ -1,4 +1,4 @@
-# Kafka → Delta Lake Streaming Pipeline (Databricks)
+# Kafka → Delta Lake → Azure OpenAI Intelligence Pipeline
 
 A production-style streaming data engineering project that ingests clickstream events from Kafka, processes them with PySpark Structured Streaming, stores them in Delta Lake, and applies MLflow-tracked anomaly detection for Gold-layer scoring.
 
@@ -9,6 +9,7 @@ I built this project to practice the kinds of tradeoffs that show up in real str
 ![PySpark](https://img.shields.io/badge/PySpark-Streaming-brightgreen?logo=apache-spark)
 ![MLflow](https://img.shields.io/badge/MLflow-Tracking%2FInference-lightgrey?logo=mlflow)
 ![AWS](https://img.shields.io/badge/AWS-S3%20%2B%20CloudFront-yellow?logo=amazonaws)
+![Azure OpenAI](https://img.shields.io/badge/Azure%20OpenAI-GPT--4.1--mini-blue?logo=microsoftazure)
 
 ## Live Project
 
@@ -24,7 +25,7 @@ This pipeline simulates a real-time clickstream analytics system in which user e
 
 ### End-to-End Flow
 
-Confluent Kafka → PySpark Structured Streaming → Bronze Delta Table → Silver Layer → MLflow Inference → Gold Table
+Confluent Kafka → Bronze Delta → Silver Delta → MLflow Isolation Forest → gold_anomaly_predictions → Azure OpenAI GPT-4.1-mini → Pydantic Validation → gold_events_enriched
 
 ![Kafka → Delta Lake MLflow Pipeline Architecture](docs/mlflow_diagram.png)
 
@@ -58,6 +59,7 @@ This project highlights several production-minded engineering patterns:
 | Monitoring | Delta log tables, Spark UI, benchmark logs |
 | ML | scikit-learn Isolation Forest, MLflow |
 | Hosting | AWS S3, CloudFront, Route 53 |
+| AI Enrichment | Azure OpenAI, GPT-4.1-mini, Pydantic structured outputs |
 
 * * * * *
 
@@ -242,6 +244,81 @@ This project does more than attach a model to a pipeline. It demonstrates:
 -   linkage between inference results and MLflow run metadata
 
 That makes the Gold layer more credible as a production-style ML-ready output rather than a one-off demo.
+
+* * * * *
+
+## AI Enrichment Layer: Azure OpenAI Structured Outputs
+
+This project now extends the Gold anomaly detection layer with an AI-powered enrichment step using Azure OpenAI.
+
+After anomalous events are written to `gold_anomaly_predictions`, a Databricks notebook calls a deployed Azure OpenAI `gpt-4.1-mini` model to generate structured explanations for each anomaly.
+
+### AI Enrichment Flow
+
+```
+gold_anomaly_predictions
+        ↓
+Azure OpenAI GPT-4.1-mini
+        ↓
+Pydantic validation
+        ↓
+gold_events_enriched
+
+```
+
+### Enrichment Output
+
+The AI layer produces structured fields including:
+
+-   `event_summary`
+
+-   `user_intent`
+
+-   `risk_level`
+
+-   `risk_explanation`
+
+-   `confidence`
+
+-   `structured_output_valid`
+
+-   `llm_model`
+
+-   `prompt_version`
+
+-   `enrichment_ts`
+
+### Example Validation Query
+
+```
+SELECT
+  COUNT(*) AS total_rows,
+  SUM(CASE WHEN structured_output_valid = true THEN 1 ELSE 0 END) AS valid_outputs,
+  ROUND(
+    SUM(CASE WHEN structured_output_valid = true THEN 1 ELSE 0 END) / COUNT(*) * 100,
+    2
+  ) AS structured_output_validity_pct
+FROM gold_events_enriched;
+
+```
+
+Initial test results produced `100%` structured output validity across the sample enrichment run.
+
+![Azure OpenAI Deployment](docs/azure_openai_deployment.png)
+
+![Databricks Azure OpenAI Integration](docs/databricks_ai_enrichment_notebook.png)
+
+![Gold Events Enriched Table](docs/gold_events_enriched_table.png)
+
+![Structured Output Validity Metric](docs/structured_output_validity_metric.png)
+
+This layer moves the project beyond traditional anomaly scoring by turning model outputs into analyst-readable operational intelligence.
+
+### AI Risk Assessment Output
+
+![AI Risk Assessment Output](docs/ai_risk_assessment_output.png)
+
+Structured outputs include AI-generated risk levels and confidence scores for downstream analyst review.
 
 * * * * *
 
