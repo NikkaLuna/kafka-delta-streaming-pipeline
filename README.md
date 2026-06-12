@@ -288,21 +288,7 @@ The AI layer produces structured fields including:
 
 -   `enrichment_ts`
 
-### Example Validation Query
-
-```
-SELECT
-  COUNT(*) AS total_rows,
-  SUM(CASE WHEN structured_output_valid = true THEN 1 ELSE 0 END) AS valid_outputs,
-  ROUND(
-    SUM(CASE WHEN structured_output_valid = true THEN 1 ELSE 0 END) / COUNT(*) * 100,
-    2
-  ) AS structured_output_validity_pct
-FROM gold_events_enriched;
-
-```
-
-Initial test results produced `100%` structured output validity across the sample enrichment run.
+### Azure OpenAI Enrichment Evidence
 
 ![Azure OpenAI Deployment](docs/azure_openai_deployment.png)
 
@@ -358,11 +344,15 @@ These choices help simulate a more realistic production environment.
 
 ## Certification Alignment
 
-This project aligns with Databricks Data Engineer Professional topics including:
+This project aligns with Databricks Data Engineer Professional and AI-103 Azure AI Apps and Agents Developer Associate certification topics including:
 
--   Structured Streaming
--   Delta Lake design
--   workflow orchestration
--   production-minded observability
--   MLflow integration
--   performance tuning and optimization
+- Structured Streaming
+- Delta Lake medallion architecture
+- Databricks workflow orchestration
+- production-minded observability and monitoring
+- MLflow model logging, registry, and inference
+- performance tuning and Spark execution inspection
+- Azure OpenAI model deployment
+- structured outputs with Pydantic validation
+- AI-powered anomaly explanation and risk assessment
+- responsible AI patterns including validation, confidence scoring, and auditability
