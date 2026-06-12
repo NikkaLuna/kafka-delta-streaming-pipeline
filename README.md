@@ -306,11 +306,19 @@ Initial test results produced `100%` structured output validity across the sampl
 
 ![Azure OpenAI Deployment](docs/azure_openai_deployment.png)
 
+The Azure OpenAI deployment hosts the GPT-4.1-mini model used to generate structured anomaly explanations and risk assessments.
+
 ![Databricks Azure OpenAI Integration](docs/databricks_ai_enrichment_notebook.png)
+
+Databricks successfully connects to Azure OpenAI and executes inference requests as part of the enrichment workflow.
 
 ![Gold Events Enriched Table](docs/gold_events_enriched_table.png)
 
+AI-generated event summaries and inferred user intent are persisted to the `gold_events_enriched` Delta table for downstream analysis.
+
 ![Structured Output Validity Metric](docs/structured_output_validity_metric.png)
+
+Pydantic validation is used to verify structured AI responses, achieving 100% validity across the initial enrichment sample.
 
 This layer moves the project beyond traditional anomaly scoring by turning model outputs into analyst-readable operational intelligence.
 
