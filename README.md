@@ -35,6 +35,10 @@ Confluent Kafka
 → gold_events_enriched
 → MLflow AI Evaluation
 → ai_enrichment_eval_metrics
+→ knowledge_chunks
+→ RAG Retrieval
+→ gold_events_enriched_rag
+→ human_review_queue
 
 ![Kafka → Delta Lake MLflow Pipeline Architecture](docs/mlflow_diagram.png)
 
@@ -70,6 +74,9 @@ This project highlights several production-minded engineering patterns:
 | Hosting | AWS S3, CloudFront, Route 53 |
 | AI Enrichment | Azure OpenAI, GPT-4.1-mini, Pydantic structured outputs |
 | AI Evaluation | MLflow Tracking, Delta Lake |
+| RAG          | Knowledge Base, Retrieval-Augmented Generation |
+| Human Review | Human-in-the-Loop Workflow                     |
+
 
 * * * * *
 
@@ -359,6 +366,85 @@ Evaluation results are persisted to the `ai_enrichment_eval_metrics` Delta table
 ![MLflow AI Evaluation Run](docs/mlflow_ai_evaluation_run.png)
 
 MLflow tracks enrichment evaluation runs, including structured output validity, confidence metrics, runtime measurements, model version, and prompt version for future experimentation and comparison.
+
+* * * * *
+
+## Retrieval-Augmented Generation (RAG)
+
+The project now includes a Retrieval-Augmented Generation (RAG) investigation layer that provides historical incident context and operational playbooks to Azure OpenAI during anomaly enrichment.
+
+### RAG Workflow
+
+gold_anomaly_predictions
+        ↓
+knowledge_chunks
+        ↓
+Dynamic Retrieval
+        ↓
+Azure OpenAI GPT-4.1-mini
+        ↓
+gold_events_enriched_rag
+
+### Knowledge Base
+
+The RAG layer includes operational knowledge documents such as:
+
+- payment_processor_outage_2024.md
+- cdn_latency_incident_2024.md
+- checkout_abandonment_playbook.md
+- fraud_response_playbook.md
+
+These documents are chunked and stored in the knowledge_chunks Delta table for retrieval.
+
+![Knowledge Chunks Table](docs/knowledge_chunks_table.png)
+
+Operational incident reports and playbooks are chunked and stored in the knowledge_chunks Delta table for retrieval during RAG-based anomaly investigation.
+
+### RAG Output Fields
+
+The RAG enrichment workflow extends the original AI enrichment output with:
+
+- related_incident
+- recommended_action
+- source_document
+
+This enables anomaly explanations to reference operational guidance and historical incident context.
+
+![RAG Enriched Output](docs/rag_enriched_output.png)
+
+The RAG enrichment workflow combines anomaly data with retrieved operational context to generate incident-aware recommendations, source attribution, and analyst guidance.
+
+* * * * *
+
+## Human Review Queue
+
+To support human-in-the-loop operations, RAG-enriched anomalies are routed into a review workflow.
+
+### Human Review Flow
+
+gold_events_enriched_rag
+        ↓
+human_review_queue
+        ↓
+approved / escalated / dismissed
+
+### Review Metadata
+
+The review queue records:
+
+- review_id
+- review_status
+- review_priority
+- reviewer_notes
+- reviewed_by
+- review_created_ts
+- reviewed_ts
+
+This creates an auditable workflow that combines AI recommendations with human analyst oversight.
+
+![Human Review Queue](docs/human_review_queue.png)
+
+RAG-enriched anomalies are routed into a human review workflow, enabling analyst approval, escalation, and auditability of AI-generated recommendations.
 
 * * * * *
 
