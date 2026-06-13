@@ -468,6 +468,16 @@ AI and RAG-enriched anomaly findings are translated into estimated revenue at ri
 
 * * * * *
 
+## Semantic Search
+
+The knowledge base is vectorized using TF-IDF embeddings and cosine similarity to retrieve the most relevant incidents and operational playbooks for a given query.
+
+![Semantic Search Results](docs/semantic_search_results.png)
+
+Knowledge base documents are vectorized using TF-IDF embeddings and ranked using cosine similarity, allowing relevant incident reports and playbooks to be retrieved based on natural language queries.
+
+* * * * *
+
 ## Cost and Infrastructure Optimization
 
 I included cost and cluster tracking because in real data platforms, performance is only half the story - how much a workflow costs to run matters too.
