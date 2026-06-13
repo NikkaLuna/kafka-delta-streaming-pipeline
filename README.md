@@ -270,6 +270,8 @@ This project now extends the Gold anomaly detection layer with an AI-powered enr
 
 After anomalous events are written to `gold_anomaly_predictions`, a Databricks notebook calls a deployed Azure OpenAI `gpt-4.1-mini` model to generate structured explanations for each anomaly.
 
+This layer moves the project beyond traditional anomaly scoring by turning model outputs into analyst-readable operational intelligence.
+
 ### AI Enrichment Flow
 
 ```
@@ -280,7 +282,6 @@ Azure OpenAI GPT-4.1-mini
 Pydantic validation
         ↓
 gold_events_enriched
-
 ```
 
 ### Enrichment Output
@@ -323,8 +324,6 @@ AI-generated event summaries and inferred user intent are persisted to the `gold
 
 Pydantic validation is used to verify structured AI responses, achieving 100% validity across the initial enrichment sample.
 
-This layer moves the project beyond traditional anomaly scoring by turning model outputs into analyst-readable operational intelligence.
-
 ### AI Risk Assessment Output
 
 ![AI Risk Assessment Output](docs/ai_risk_assessment_output.png)
@@ -333,11 +332,11 @@ Structured outputs include AI-generated risk levels and confidence scores for do
 
 * * * * *
 
-### AI Evaluation and Prompt Tracking
+## AI Evaluation and Prompt Tracking
 
 To make the AI enrichment layer observable and auditable, the project includes a dedicated evaluation workflow that measures structured output quality and logs operational metadata.
 
-#### Evaluation Flow
+### Evaluation Flow
 
 gold_events_enriched
         ↓
@@ -347,7 +346,7 @@ MLflow Experiment Tracking
         ↓
 ai_enrichment_eval_metrics
 
-#### Evaluation Metrics
+### Evaluation Metrics
 
 The evaluation workflow records:
 
