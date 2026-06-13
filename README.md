@@ -25,7 +25,16 @@ This pipeline simulates a real-time clickstream analytics system in which user e
 
 ### End-to-End Flow
 
-Confluent Kafka → Bronze Delta → Silver Delta → MLflow Isolation Forest → gold_anomaly_predictions → Azure OpenAI GPT-4.1-mini → Pydantic Validation → gold_events_enriched
+Confluent Kafka
+→ Bronze Delta
+→ Silver Delta
+→ MLflow Isolation Forest
+→ gold_anomaly_predictions
+→ Azure OpenAI GPT-4.1-mini
+→ Pydantic Validation
+→ gold_events_enriched
+→ MLflow AI Evaluation
+→ ai_enrichment_eval_metrics
 
 ![Kafka → Delta Lake MLflow Pipeline Architecture](docs/mlflow_diagram.png)
 
@@ -60,6 +69,7 @@ This project highlights several production-minded engineering patterns:
 | ML | scikit-learn Isolation Forest, MLflow |
 | Hosting | AWS S3, CloudFront, Route 53 |
 | AI Enrichment | Azure OpenAI, GPT-4.1-mini, Pydantic structured outputs |
+| AI Evaluation | MLflow Tracking, Delta Lake |
 
 * * * * *
 
@@ -313,6 +323,42 @@ This layer moves the project beyond traditional anomaly scoring by turning model
 ![AI Risk Assessment Output](docs/ai_risk_assessment_output.png)
 
 Structured outputs include AI-generated risk levels and confidence scores for downstream analyst review.
+
+* * * * *
+
+### AI Evaluation and Prompt Tracking
+
+To make the AI enrichment layer observable and auditable, the project includes a dedicated evaluation workflow that measures structured output quality and logs operational metadata.
+
+#### Evaluation Flow
+
+gold_events_enriched
+        ↓
+Structured Output Validation
+        ↓
+MLflow Experiment Tracking
+        ↓
+ai_enrichment_eval_metrics
+
+#### Evaluation Metrics
+
+The evaluation workflow records:
+
+- total enriched rows
+- valid structured outputs
+- structured output validity percentage
+- confidence metrics
+- model version
+- prompt version
+- runtime metadata
+
+![AI Evaluation Metrics Table](docs/ai_enrichment_eval_metrics_table.png)
+
+Evaluation results are persisted to the `ai_enrichment_eval_metrics` Delta table, creating an auditable history of AI enrichment quality, confidence scores, prompt versions, and model performance over time.
+
+![MLflow AI Evaluation Run](docs/mlflow_ai_evaluation_run.png)
+
+MLflow tracks enrichment evaluation runs, including structured output validity, confidence metrics, runtime measurements, model version, and prompt version for future experimentation and comparison.
 
 * * * * *
 
