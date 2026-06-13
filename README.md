@@ -447,6 +447,27 @@ RAG-enriched anomalies are routed into a human review workflow, enabling analyst
 
 * * * * *
 
+## Business Impact Simulation
+
+The platform converts AI and RAG-enriched anomaly findings into business-oriented metrics that help prioritize operational response efforts.
+
+![Business Impact Metrics](docs/business_impact_metrics.png)
+
+AI and RAG-enriched anomaly findings are translated into estimated revenue at risk, affected session estimates, priority scores, and recommended escalation actions.
+
+### Business Impact Outputs
+
+- Estimated revenue at risk
+- Affected session estimates
+- Priority scoring
+- Recommended escalation actions
+
+![Business Impact Metrics](docs/business_impact_metrics.png)
+
+AI and RAG-enriched anomaly findings are translated into estimated revenue at risk, affected session estimates, priority scores, and recommended escalation actions.
+
+* * * * *
+
 ## Cost and Infrastructure Optimization
 
 I included cost and cluster tracking because in real data platforms, performance is only half the story - how much a workflow costs to run matters too.
