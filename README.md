@@ -25,24 +25,13 @@ This pipeline simulates a real-time clickstream analytics system in which user e
 
 ### End-to-End Flow
 
-Confluent Kafka
-→ Bronze Delta
-→ Silver Delta
-→ MLflow Isolation Forest
-→ gold_anomaly_predictions
-→ Azure OpenAI GPT-4.1-mini
-→ Pydantic Validation
-→ gold_events_enriched
-→ MLflow AI Evaluation
-→ ai_enrichment_eval_metrics
-→ knowledge_chunks
-→ RAG Retrieval
-→ gold_events_enriched_rag
-→ human_review_queue
+This diagram shows the end-to-end Kafka → Delta Lake pipeline, including MLflow-based Gold-layer scoring.
 
 ![Kafka → Delta Lake MLflow Pipeline Architecture](docs/mlflow_diagram.png)
 
-This diagram shows the end-to-end Kafka → Delta Lake pipeline, including MLflow-based Gold-layer scoring.
+This diagram shows the AI intelligence layer, including Azure OpenAI enrichment, retrieval-augmented generation (RAG), human review workflows, business impact analysis, and operational decision support.
+
+![AI Intelligence & Decision Support Workflow](docs/ai_intelligence_workflow.png)
 
 * * * * *
 
