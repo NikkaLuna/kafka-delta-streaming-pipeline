@@ -28,15 +28,6 @@ This pipeline simulates a real-time clickstream analytics system in which user e
 This diagram shows the end-to-end Kafka → Delta Lake pipeline, including MLflow-based Gold-layer scoring.
 
 ![Kafka → Delta Lake MLflow Pipeline Architecture](docs/mlflow_diagram.png)
-
----
-
-## AI Intelligence Layer
-
-This diagram shows the AI intelligence layer, including Azure OpenAI enrichment, retrieval-augmented generation (RAG), human review workflows, business impact analysis, and operational decision support.
-
-![AI Intelligence & Decision Support Workflow](docs/ai_intelligence_workflow.png)
-
 ---
 
 * * * * *
@@ -261,23 +252,15 @@ That makes the Gold layer more credible as a production-style ML-ready output ra
 
 ## AI Enrichment Layer: Azure OpenAI Structured Outputs
 
-This project now extends the Gold anomaly detection layer with an AI-powered enrichment step using Azure OpenAI.
+After the traditional ML anomaly detection step, I added a production-grade Generative AI layer using Azure OpenAI. This transforms raw anomaly scores into rich, explainable, and actionable insights.
 
 After anomalous events are written to `gold_anomaly_predictions`, a Databricks notebook calls a deployed Azure OpenAI `gpt-4.1-mini` model to generate structured explanations for each anomaly.
 
-This layer moves the project beyond traditional anomaly scoring by turning model outputs into analyst-readable operational intelligence.
+## AI Intelligence Layer
 
-### AI Enrichment Flow
+This diagram shows the AI intelligence layer, including Azure OpenAI enrichment, retrieval-augmented generation (RAG), human review workflows, business impact analysis, and operational decision support.
 
-```
-gold_anomaly_predictions
-        ↓
-Azure OpenAI GPT-4.1-mini
-        ↓
-Pydantic validation
-        ↓
-gold_events_enriched
-```
+![AI Intelligence & Decision Support Workflow](docs/ai_intelligence_workflow.png)
 
 ### Enrichment Output
 
@@ -301,7 +284,7 @@ The AI layer produces structured fields including:
 
 -   `enrichment_ts`
 
-### Azure OpenAI Enrichment Evidence
+### Azure OpenAI Enrichment Screenshots
 
 ![Azure OpenAI Deployment](docs/azure_openai_deployment.png)
 
