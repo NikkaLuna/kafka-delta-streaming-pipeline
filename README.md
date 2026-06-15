@@ -29,9 +29,15 @@ This diagram shows the end-to-end Kafka → Delta Lake pipeline, including MLflo
 
 ![Kafka → Delta Lake MLflow Pipeline Architecture](docs/mlflow_diagram.png)
 
+---
+
+## AI Intelligence Layer
+
 This diagram shows the AI intelligence layer, including Azure OpenAI enrichment, retrieval-augmented generation (RAG), human review workflows, business impact analysis, and operational decision support.
 
 ![AI Intelligence & Decision Support Workflow](docs/ai_intelligence_workflow.png)
+
+---
 
 * * * * *
 
