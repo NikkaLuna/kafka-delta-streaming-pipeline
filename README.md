@@ -418,6 +418,16 @@ The RAG enrichment workflow combines anomaly data with retrieved operational con
 
 * * * * *
 
+## AI Quality Evaluation
+
+The project includes an LLM-as-judge evaluation workflow that scores RAG-enriched anomaly outputs for relevance, groundedness, completeness, and hallucination risk.
+
+![AI Quality Evaluation Metrics](docs/ai_quality_eval_metrics.png)
+
+AI quality metrics are written to `ai_quality_eval_metrics`, creating an auditable evaluation layer for measuring the reliability of AI-generated anomaly recommendations.
+
+* * * * *
+
 ## Human Review Queue
 
 To support human-in-the-loop operations, RAG-enriched anomalies are routed into a review workflow.
@@ -465,19 +475,7 @@ AI and RAG-enriched anomaly findings are translated into estimated revenue at ri
 - Priority scoring
 - Recommended escalation actions
 
-![Business Impact Metrics](docs/business_impact_metrics.png)
-
 AI and RAG-enriched anomaly findings are translated into estimated revenue at risk, affected session estimates, priority scores, and recommended escalation actions.
-
-* * * * *
-
-## Semantic Search
-
-The knowledge base is vectorized using TF-IDF embeddings and cosine similarity to retrieve the most relevant incidents and operational playbooks for a given query.
-
-![Semantic Search Results](docs/semantic_search_results.png)
-
-Knowledge base documents are vectorized using TF-IDF embeddings and ranked using cosine similarity, allowing relevant incident reports and playbooks to be retrieved based on natural language queries.
 
 * * * * *
 
