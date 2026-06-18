@@ -394,7 +394,7 @@ These documents are chunked and stored in the knowledge_chunks Delta table for r
 
 Operational incident reports and playbooks are chunked and stored in the knowledge_chunks Delta table for retrieval during RAG-based anomaly investigation.
 
-### ### Semantic Retrieval with Azure OpenAI Embeddings
+### Semantic Retrieval with Azure OpenAI Embeddings
 
 The semantic search workflow was upgraded from a TF-IDF baseline to Azure OpenAI embeddings. Knowledge base chunks are embedded and ranked using cosine similarity to retrieve the most relevant operational context for a natural language query.
 
