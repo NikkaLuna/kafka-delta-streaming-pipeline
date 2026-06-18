@@ -315,6 +315,7 @@ AzureChatOpenAI
         ↓
 PydanticOutputParser
 ```
+![LangChain Enrichment Chain](docs/langchain_enrichment_chain.png)
 
 The refactor preserves the original structured enrichment behavior while making the prompt, model call, and output parsing steps easier to maintain, test, and extend for future RAG or client-facing AI workflows.
 
