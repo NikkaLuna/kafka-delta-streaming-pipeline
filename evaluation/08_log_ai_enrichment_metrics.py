@@ -46,24 +46,6 @@ display(eval_df)
 
 # COMMAND ----------
 
-
-eval_df = (
-    df.withColumn(
-        "is_valid_structured_output",
-        (
-            F.col("event_summary").isNotNull()
-            & F.col("user_intent").isNotNull()
-            & F.col("risk_level").isin("low", "medium", "high")
-            & F.col("risk_explanation").isNotNull()
-            & F.col("confidence").between(0.0, 1.0)
-        ).cast("int")
-    )
-)
-
-display(eval_df)
-
-# COMMAND ----------
-
 start_time = time.time()
 
 metrics_row = (

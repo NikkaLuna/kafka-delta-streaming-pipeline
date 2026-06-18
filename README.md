@@ -302,6 +302,22 @@ AI-generated event summaries and inferred user intent are persisted to the `gold
 
 Pydantic validation is used to verify structured AI responses, achieving 100% validity across the initial enrichment sample.
 
+### LangChain Refactor
+
+The Azure OpenAI enrichment workflow was also refactored into a LangChain-based implementation using `ChatPromptTemplate`, `AzureChatOpenAI`, and `PydanticOutputParser`.
+
+This version replaces manual prompt construction and response parsing with a reusable LangChain chain:
+
+```text
+ChatPromptTemplate
+        ↓
+AzureChatOpenAI
+        ↓
+PydanticOutputParser
+```
+
+The refactor preserves the original structured enrichment behavior while making the prompt, model call, and output parsing steps easier to maintain, test, and extend for future RAG or client-facing AI workflows.
+
 ### AI Risk Assessment Output
 
 ![AI Risk Assessment Output](docs/ai_risk_assessment_output.png)
