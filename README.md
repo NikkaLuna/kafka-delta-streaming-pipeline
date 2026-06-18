@@ -394,6 +394,14 @@ These documents are chunked and stored in the knowledge_chunks Delta table for r
 
 Operational incident reports and playbooks are chunked and stored in the knowledge_chunks Delta table for retrieval during RAG-based anomaly investigation.
 
+### ### Semantic Retrieval with Azure OpenAI Embeddings
+
+The semantic search workflow was upgraded from a TF-IDF baseline to Azure OpenAI embeddings. Knowledge base chunks are embedded and ranked using cosine similarity to retrieve the most relevant operational context for a natural language query.
+
+![Azure OpenAI Vector Search Results](docs/azure_openai_vector_search_results.png)
+
+Fraud-related operational playbooks are ranked as the most relevant context for a suspicious fraud query, demonstrating semantic retrieval using vector embeddings.
+
 ### RAG Output Fields
 
 The RAG enrichment workflow extends the original AI enrichment output with:
